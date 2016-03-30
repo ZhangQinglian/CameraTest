@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
 
     private interface OpenCameraCallback {
-        void finish(boolean success, Camera camera);
+        void finish(Camera camera);
     }
 
     private class OpenCameraThread extends Thread {
@@ -39,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     if (camera == null) {
-                        mCallback.finish(false, null);
+                        mCallback.finish(null);
                     } else {
-                        mCallback.finish(true, camera);
+                        mCallback.finish(camera);
                     }
                 }
             });
@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d(CameraPreview.TAG, " onRestart ");
         new OpenCameraThread(new OpenCameraCallback() {
             @Override
-            public void finish(boolean success, Camera camera) {
-                if (success) {
+            public void finish( Camera camera) {
+                if (camera != null) {
                     initCameraView(camera);
                 }
             }
@@ -179,8 +179,8 @@ public class MainActivity extends AppCompatActivity {
         public void onFinish() {
             new OpenCameraThread(new OpenCameraCallback() {
                 @Override
-                public void finish(boolean success, Camera camera) {
-                    if (success) {
+                public void finish(Camera camera) {
+                    if (camera != null) {
                         initCameraView(camera);
                     }
                 }
