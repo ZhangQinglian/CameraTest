@@ -95,12 +95,14 @@ public class ARTPHelper {
         }
     }
 
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults,Runnable notGetAll,Runnable getAll){
         switch (requestCode) {
             case PERMISSION_REQ_CODE: {
                 if (grantResults.length == permissions.length) {
+                    getAll.run();
                 } else {
                    //TODO not all permission we get
+                    notGetAll.run();
                 }
                 return;
             }

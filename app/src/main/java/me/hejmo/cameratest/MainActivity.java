@@ -4,21 +4,16 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
-import me.hejmo.cameratest.artphelper.ARTPHelper;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends QuickActivity {
 
     private CameraPreview mPreview;
-    private ARTPHelper mARTPHelper;
-    private Handler mHandler = new Handler();
+    private Camera mCamera;
 
     private interface OpenCameraCallback {
         void finish(Camera camera);
@@ -34,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            final Camera camera = CameraUtils.getCameraInstance();
+            final Camera camera = CameraHolder.getInstance().openCamera();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -54,9 +49,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(CameraPreview.TAG, " onCreate ");
         setContentView(R.layout.activity_main);
-        mARTPHelper = new ARTPHelper(false);
-        MyPermissionProcess permissionProcess = new MyPermissionProcess(mHandler, 1000);
-        permissionProcess.start();
     }
 
 
@@ -122,13 +114,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(CameraPreview.TAG, " onResume ");
-        mARTPHelper.requestPermissions(this);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        mARTPHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 
     @Override
     protected void onDestroy() {
@@ -158,40 +145,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class MyPermissionProcess extends ILinkedProcess {
+    @Override
+    protected void onCreateTaskAsync() {
+        mCamera = CameraHolder.getInstance().openCamera();
+        Log.d(CameraPreview.TAG,"open camera success");
+    }
 
-        public MyPermissionProcess(@NonNull Handler handler, @NonNull int delay) {
-            super(handler, delay);
-        }
-
-        @Override
-        public void onStart() {
-            mARTPHelper.writeExternalStorage().useCamera().accessFineLocation();
-            mARTPHelper.requestPermissions(MainActivity.this);
-        }
-
-        @Override
-        public void onProcess() {
-
-        }
-
-        @Override
-        public void onFinish() {
-            new OpenCameraThread(new OpenCameraCallback() {
-                @Override
-                public void finish(Camera camera) {
-                    if (camera != null) {
-                        initCameraView(camera);
-                    }
-                }
-            }).start();
-        }
-
-        @Override
-        public boolean isFinish() {
-            boolean b = mARTPHelper.isAllPermissionGrant(MainActivity.this);
-            Log.d(CameraPreview.TAG, " all permission grant ? " + b);
-            return b;
-        }
+    @Override
+    protected void onCreateTaskAsyncFinish() {
+        initCameraView(mCamera);
     }
 }
