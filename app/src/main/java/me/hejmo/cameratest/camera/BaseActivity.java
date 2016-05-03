@@ -1,4 +1,4 @@
-package me.hejmo.cameratest;
+package me.hejmo.cameratest.camera;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -16,7 +16,7 @@ import me.hejmo.cameratest.artphelper.ARTPHelper;
  *
  * @author zhangqinglian
  */
-public class QuickActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity {
 
 
     private final Object mCreateFlag = new Object();
@@ -24,38 +24,6 @@ public class QuickActivity extends AppCompatActivity {
     private boolean mShouldWaitSetContentView = true;
 
     private ARTPHelper mARTPHelper;
-
-    private class OnCreateTaskThread extends Thread {
-        @Override
-        public void run() {
-            Log.d(CameraPreview.TAG, "OnCreateTaskThread running");
-            onCreateTaskAsync();
-            if (mShouldWaitSetContentView) {
-                try {
-                    synchronized (mCreateFlag) {
-                        Log.d(CameraPreview.TAG, "OnCreateTaskThread wait");
-                        mCreateFlag.wait();
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onCreateTaskAsyncFinish();
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Log.d(CameraPreview.TAG, "OnCreateTaskThread not wait");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        onCreateTaskAsyncFinish();
-                    }
-                });
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +39,9 @@ public class QuickActivity extends AppCompatActivity {
         mARTPHelper.writeExternalStorage().useCamera().accessFineLocation();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !mARTPHelper.isAllPermissionGrant(this)) {
             mARTPHelper.requestPermissions(this);
-        } else {
-            OnCreateTaskThread t = new OnCreateTaskThread();
-            t.start();
+            CameraHolder.getInstance(this).setmCameraPermission(false);
+        }else{
+
         }
 
     }
@@ -99,26 +67,17 @@ public class QuickActivity extends AppCompatActivity {
         }
     }
 
-    protected void onCreateTaskAsync() {
-        //subclass maybe need this
-    }
-
-    protected void onCreateTaskAsyncFinish() {
-        //subclass maybe need this
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         mARTPHelper.onRequestPermissionsResult(requestCode, permissions, grantResults, new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(QuickActivity.this, "权限不足", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BaseActivity.this, "权限不足", Toast.LENGTH_SHORT).show();
             }
         }, new Runnable() {
             @Override
             public void run() {
-                OnCreateTaskThread t = new OnCreateTaskThread();
-                t.start();
+                CameraHolder.getInstance(BaseActivity.this).setmCameraPermission(true);
             }
         });
     }
