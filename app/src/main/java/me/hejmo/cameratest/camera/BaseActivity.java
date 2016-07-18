@@ -1,6 +1,7 @@
 package me.hejmo.cameratest.camera;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import me.hejmo.cameratest.artphelper.ARTPHelper;
+import me.hejmo.cameratest.media.MediaActivity;
 
 
 /**
@@ -41,7 +43,7 @@ public class BaseActivity extends AppCompatActivity {
             mARTPHelper.requestPermissions(this);
             CameraHolder.getInstance(this).setmCameraPermission(false);
         }else{
-
+            startMedia();
         }
 
     }
@@ -78,7 +80,15 @@ public class BaseActivity extends AppCompatActivity {
             @Override
             public void run() {
                 CameraHolder.getInstance(BaseActivity.this).setmCameraPermission(true);
+                Toast.makeText(BaseActivity.this, "权限获取成功", Toast.LENGTH_SHORT).show();
+                startMedia();
             }
         });
+    }
+
+    private void startMedia(){
+        Intent intent = new Intent(BaseActivity.this, MediaActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

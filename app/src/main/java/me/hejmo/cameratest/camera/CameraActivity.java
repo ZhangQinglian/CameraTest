@@ -69,6 +69,7 @@ public class CameraActivity extends BaseActivity implements CameraHolder.CameraC
                     @Override
                     public void onClick(View v) {
                         mCameraHolder.tryToTakePhoto(false);
+                        mCameraCover.startShutter();
                     }
                 }
         );

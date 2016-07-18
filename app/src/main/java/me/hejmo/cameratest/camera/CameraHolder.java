@@ -103,15 +103,15 @@ public class CameraHolder {
         mCallback = callback;
     }
 
-    public void openCamera() {
+    public Camera openCamera() {
         if (!mCameraPermission) {
-            return;
+            return null;
         }
         mCamera = CameraUtils.getCameraInstance();
         if (mCallback != null) {
             mCallback.onCameraOpened();
         }
-
+        return mCamera;
     }
 
     public void doCameraPreview(SurfaceView surfaceView) {

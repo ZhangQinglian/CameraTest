@@ -56,7 +56,7 @@ public class CameraCover extends View {
         public void run() {
             ValueAnimator valueAnimator = new ValueAnimator();
             valueAnimator.setIntValues(0, 400);
-            valueAnimator.setDuration(600);
+            valueAnimator.setDuration(400);
             valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
