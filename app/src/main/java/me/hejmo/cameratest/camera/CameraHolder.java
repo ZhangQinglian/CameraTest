@@ -181,7 +181,7 @@ public class CameraHolder {
         //如果需要自动对焦，这句一定要加
         camera.cancelAutoFocus();
         camera.setParameters(mParameters);
-        camera.setDisplayOrientation(90);
+        camera.setDisplayOrientation(CameraUtils.getBackCameraOrientation());
     }
 
     private double getPreviewSizeScale(SurfaceView surfaceView) {

@@ -47,10 +47,16 @@ public class CameraActivity extends BaseActivity implements CameraHolder.CameraC
 
     public static final String CAMERA_SHARE_IP_ADDRESS = "camera_share_ip_address";
 
+    private String ip ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(CameraPreview.TAG, " onCreate ");
+        ip = getIntent().getStringExtra("ip");
+        if(ip == null || ip.trim().length() == 0){
+            throw new RuntimeException("ip is null");
+        }
         mCameraHolder = CameraApplication.getInstance().getCameraHolder();
         mCameraHolder.setCameraCallback(this);
         mHandler = new Handler(getMainLooper());
@@ -91,6 +97,8 @@ public class CameraActivity extends BaseActivity implements CameraHolder.CameraC
                 startActivity(intent);
             }
         });
+
+
     }
 
     @Override
@@ -139,10 +147,7 @@ public class CameraActivity extends BaseActivity implements CameraHolder.CameraC
         @Override
         public void run() {
             try {
-                WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-                WifiInfo info = wm.getConnectionInfo();
-                String ip = intToIp(info.getIpAddress());
-                ip = "172.16.10.190";
+
                 Log.d(CameraPreview.TAG, "   ip = " + ip);
                 Socket s = new Socket(ip,12111);
                 mCameraHolder.registerCameraSender(new CameraSender(s));

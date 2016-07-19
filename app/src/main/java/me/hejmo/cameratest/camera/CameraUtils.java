@@ -142,6 +142,20 @@ public class CameraUtils {
         return c; // returns null if camera is unavailable
     }
 
+    public static int getBackCameraOrientation(){
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        int backCameraId ;
+        for(int i = 0;i<Camera.getNumberOfCameras();i++){
+            Camera.getCameraInfo(i,info);
+            if(info.facing == Camera.CameraInfo.CAMERA_FACING_BACK){
+                return info.orientation;
+            }
+            Log.d("info","  facing" + info.facing + "      orientation + " + info.orientation);
+        }
+        //default 90
+        return 90;
+    }
+
     public static int getBackCameraId(){
         int numberOfCameras = Camera.getNumberOfCameras();
         Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
