@@ -65,8 +65,9 @@ public class DataSender {
                     if(outputStream != null){
                         if(mCallback != null){
                             byte[] data = mCallback.getData();
-                            Log.d("talkback","data size = " + data.length);
+                            Log.d("talkback","data size = " + data.length + "   type + " + data[0]);
                             outputStream.write(data);
+                            outputStream.flush();
                         }
                     }
                 } catch (IOException e) {
