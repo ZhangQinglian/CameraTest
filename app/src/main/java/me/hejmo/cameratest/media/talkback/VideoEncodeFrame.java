@@ -113,18 +113,19 @@ public class VideoEncodeFrame {
         return targets;
     }
 
-    private static ByteBuffer buffer = ByteBuffer.allocate(8);
+    private static ByteBuffer buffer1 = ByteBuffer.allocate(8);
+    private static ByteBuffer buffer2 = ByteBuffer.allocate(8);
 
-    public static byte[] getBytesFromLong(long x){
-        buffer.clear();
-        buffer.putLong(0, x);
-        return buffer.array();
+    public synchronized byte[] getBytesFromLong(long x){
+        buffer1.clear();
+        buffer1.putLong(0, x);
+        return buffer1.array();
     }
-    public static long bytesToLong(byte[] bytes) {
-        buffer.clear();
-        buffer.put(bytes, 0, bytes.length);
-        buffer.flip();//need flip
-        return buffer.getLong();
+    public synchronized static long bytesToLong(byte[] bytes) {
+        buffer2.clear();
+        buffer2.put(bytes, 0, bytes.length);
+        buffer2.flip();//need flip
+        return buffer2.getLong();
     }
 
     public static int getSizeFromBytes(byte[] bytes){

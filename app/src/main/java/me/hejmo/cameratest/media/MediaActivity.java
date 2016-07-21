@@ -22,6 +22,7 @@ import com.zqlite.android.logly.Logly;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 
 import me.hejmo.cameratest.R;
@@ -85,6 +86,8 @@ public class MediaActivity extends AppCompatActivity {
         public static final int MSG_FRAME_AVAILABLE = 1;
 
         private WeakReference<MediaActivity> mWeakActivity;
+
+        private int mCount = 0;
 
         public MainHandler(MediaActivity activity) {
             mWeakActivity = new WeakReference<MediaActivity>(activity);
@@ -434,13 +437,11 @@ public class MediaActivity extends AppCompatActivity {
         protected void onEncodedSample(MediaCodec.BufferInfo info, ByteBuffer data) {
             // Here we could have just used ByteBuffer, but in real life case we might need to
             // send sample over network, etc. This requires byte[]
-            byte[] mBuffer = new byte[0];
-            if (mBuffer.length < info.size) {
-                mBuffer = new byte[info.size];
-            }
+            byte[] buffer = new byte[info.size];
+
             data.position(info.offset);
             data.limit(info.offset + info.size);
-            data.get(mBuffer, 0, info.size);
+            data.get(buffer, 0, info.size);
 
             if ((info.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {
                 // this is the first and only config sample, which contains information about codec
@@ -453,7 +454,7 @@ public class MediaActivity extends AppCompatActivity {
 //                        0,
 //                        info.size);
                 Log.d("talkback", "++++++++ w = " + VIDEO_WIDTH + " h: " + VIDEO_HEIGHT + " s: " + info.size + " o: " + 0);
-                VideoEncodeConfig config = new VideoEncodeConfig(VIDEO_WIDTH, VIDEO_HEIGHT, info.size, 0, mBuffer);
+                VideoEncodeConfig config = new VideoEncodeConfig(VIDEO_WIDTH, VIDEO_HEIGHT, info.size, 0, buffer);
                 mTalkback.addVideoEncodeConfigure(config);
             } else {
                 // pass byte[] to decoder's queue to render asap
@@ -463,7 +464,7 @@ public class MediaActivity extends AppCompatActivity {
 //                        info.presentationTimeUs,
 //                        info.flags);
                 Log.d("talkback", "++++++++ raw  s: " + info.size + " o: " + 0 + " presentTime = " + info.presentationTimeUs);
-                VideoEncodeFrame frame = new VideoEncodeFrame(info.size, 0, info.flags, info.presentationTimeUs, mBuffer);
+                VideoEncodeFrame frame = new VideoEncodeFrame(info.size, 0, info.flags, info.presentationTimeUs, buffer);
                 mTalkback.addVideoEncodeFrame(frame);
             }
         }

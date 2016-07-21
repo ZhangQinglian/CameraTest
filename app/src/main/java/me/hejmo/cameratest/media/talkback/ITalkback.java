@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

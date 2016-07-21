@@ -5,6 +5,7 @@ import android.util.TimeUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -65,7 +66,8 @@ public class DataSender {
                     if(outputStream != null){
                         if(mCallback != null){
                             byte[] data = mCallback.getData();
-                            Log.d("talkback","data size = " + data.length + "   type + " + data[0]);
+                            Log.d("talkback","total size = " + data.length + "   type + " + data[0]);
+
                             outputStream.write(data);
                             outputStream.flush();
                         }
