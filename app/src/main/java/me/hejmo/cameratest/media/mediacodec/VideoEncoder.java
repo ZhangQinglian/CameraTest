@@ -24,6 +24,9 @@ public class VideoEncoder implements VideoCodec {
     }
     
     public Surface getInputSurface(){
+        if(mWorker == null){
+            return null;
+        }
         return mWorker.getSurface();
     }
 

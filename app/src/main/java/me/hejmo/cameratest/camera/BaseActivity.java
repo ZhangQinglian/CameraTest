@@ -87,7 +87,11 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void startMedia(){
+        Intent preIntent = getIntent();
+        String role = preIntent.getExtras().getString("role");
+
         Intent intent = new Intent(BaseActivity.this, MediaActivity.class);
+        intent.putExtra("role",role);
         startActivity(intent);
         finish();
     }

@@ -12,7 +12,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
     <application
         android:name=".camera.CameraApplication"
         android:allowBackup="true"
@@ -32,9 +35,7 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:taskAffinity="me.hejmo.cameratest.MainActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".camera.CameraMirrorActivity"
             android:clearTaskOnLaunch="true"
@@ -43,7 +44,7 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:taskAffinity="me.hejmo.cameratest.MainActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
             android:name=".media.MediaActivity"
             android:clearTaskOnLaunch="true"
@@ -53,9 +54,12 @@
             android:screenOrientation="portrait"
             android:taskAffinity="me.hejmo.cameratest.media.MediaActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+        </activity>
+
+        <activity android:name=".camera.BaseActivity">
 
         </activity>
-        <activity android:name=".camera.BaseActivity">
+        <activity android:name=".media.MediaLauncher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -140,10 +140,10 @@ public class CameraActivity extends BaseActivity implements CameraHolder.CameraC
         @Override
         public void run() {
             try {
-                WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-                WifiInfo info = wm.getConnectionInfo();
-                String ip = intToIp(info.getIpAddress());
-                ip = "172.16.10.190";
+                //WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+                //WifiInfo info = wm.getConnectionInfo();
+                //String ip = intToIp(info.getIpAddress());
+                String ip = "172.16.10.190";
                 Log.d(CameraPreview.TAG, "   ip = " + ip);
                 Socket s = new Socket(ip,12111);
                 mCameraHolder.registerCameraSender(new CameraSender(s));
