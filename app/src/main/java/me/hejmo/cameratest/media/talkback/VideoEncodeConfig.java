@@ -1,5 +1,7 @@
 package me.hejmo.cameratest.media.talkback;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -19,7 +21,7 @@ public class VideoEncodeConfig {
 
     public final byte[] data;
 
-    public VideoEncodeConfig(int w,int h,int s,int o,byte[] d){
+    public VideoEncodeConfig(int w, int h, int s, int o, byte[] d) {
         this.width = w;
         this.height = h;
         this.size = s;
@@ -27,8 +29,8 @@ public class VideoEncodeConfig {
         this.data = d;
     }
 
-    public byte[] getBytes(){
-        int totalLen = 17+ size;
+    public byte[] getBytes() {
+        int totalLen = 17 + size;
         ByteBuffer buffer = ByteBuffer.allocate(totalLen);
         buffer.clear();
         buffer.put(ITalkback.VIDEO_ENCODE_CONFIGURE);  //1
@@ -36,12 +38,12 @@ public class VideoEncodeConfig {
         buffer.put(getBytesFromInt(height));           //4
         buffer.put(getBytesFromInt(size));             //4
         buffer.put(getBytesFromInt(offset));           //4
-        buffer.put(data,offset,size);
+        buffer.put(data, offset, size);
         buffer.position(0);
         buffer.limit(buffer.capacity());
 
         byte[] totals = new byte[totalLen];
-        buffer.get(totals,0,totalLen);
+        buffer.get(totals, 0, totalLen);
         return totals;
     }
 
@@ -50,7 +52,7 @@ public class VideoEncodeConfig {
         return "w : " + width + " h : " + height + " s : " + size + " o : " + offset + " data len : " + data.length;
     }
 
-    public static VideoEncodeConfig getConfig(InputStream is){
+    public static VideoEncodeConfig getConfig(InputStream is) {
 
         int w = VideoEncodeConfig.getIntFromIS(is);
         int h = VideoEncodeConfig.getIntFromIS(is);
@@ -58,27 +60,27 @@ public class VideoEncodeConfig {
         int o = VideoEncodeConfig.getIntFromIS(is);
         byte[] tempData = new byte[s];
         int totalLen = 0;
-        int p = 0;
-        while(totalLen<s){
+        int len;
+        while (totalLen < s) {
             try {
-                p += is.read(tempData,p,s-p);
-                totalLen+=p;
+                len = is.read(tempData, totalLen, s - totalLen);
+                totalLen += len;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        VideoEncodeConfig videoEncodeConfig = new VideoEncodeConfig(w,h,s,o,tempData);
+        VideoEncodeConfig videoEncodeConfig = new VideoEncodeConfig(w, h, s, o, tempData);
         return videoEncodeConfig;
     }
 
-    private static int getIntFromIS(InputStream is){
+    private static int getIntFromIS(InputStream is) {
         byte[] intBuffer = new byte[4];
+        int totalLen = 0;
         int len = 0;
-        int p = 0;
-        while(len < 4){
+        while (totalLen < 4) {
             try {
-                p += is.read(intBuffer,p,4-p);
-                len +=p;
+                len = is.read(intBuffer, totalLen, 4 - totalLen);
+                totalLen += len;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -86,7 +88,7 @@ public class VideoEncodeConfig {
         return VideoEncodeConfig.getSizeFromBytes(intBuffer);
     }
 
-    public static byte[] getBytesFromInt(int len){
+    public static byte[] getBytesFromInt(int len) {
         int temp = len;
         byte[] targets = new byte[4];
         targets[0] = (byte) (temp & 0xff);// 最低位
@@ -96,7 +98,7 @@ public class VideoEncodeConfig {
         return targets;
     }
 
-    public static int getSizeFromBytes(byte[] bytes){
+    public static int getSizeFromBytes(byte[] bytes) {
         int r = (bytes[0] & 0xff) | ((bytes[1] << 8) & 0xff00) // | 表示安位或
                 | ((bytes[2] << 24) >>> 8) | (bytes[3] << 24);
         return r;

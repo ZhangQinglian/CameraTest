@@ -20,6 +20,10 @@ public abstract class ITalkback implements Runnable, Closeable,DataSender.Sender
 
     public static final byte VIDEO_ENCODE_FRAME = 0x02;
 
+    public static final String ROLE_INITIATOR = "initiator";
+
+    public static final String ROLE_RESPONDER = "responder";
+
     public BlockingQueue<VideoEncodeConfig> mConfigs = new LinkedBlockingQueue<>(1);
 
     public BlockingQueue<VideoEncodeFrame> mFrames = new LinkedBlockingQueue<>();
@@ -32,13 +36,16 @@ public abstract class ITalkback implements Runnable, Closeable,DataSender.Sender
 
     private TalkbackCallback mCallback;
 
+    private String mRole;
+
     public interface TalkbackCallback extends DataReceiver.ReceiverCallback{
         void onTalkbackConnected();
         void onTalkbackStart();
     }
 
-    public ITalkback(TalkbackCallback callback){
+    public ITalkback(TalkbackCallback callback,String role){
         mCallback = callback;
+        mRole = role;
     }
     public void addVideoEncodeConfigure(VideoEncodeConfig configure){
         //Log.d("talkback","add config");
@@ -76,8 +83,12 @@ public abstract class ITalkback implements Runnable, Closeable,DataSender.Sender
 
     public void onConnected(Socket socket){
         try {
-            mSender = new DataSender(socket.getOutputStream(),this);
-            mReceiver = new DataReceiver(socket.getInputStream(),mCallback);
+            //if(mRole.equals("initiator")){
+                mSender = new DataSender(socket.getOutputStream(),this);
+            //}
+           // if(mRole.equals("responder")){
+                mReceiver = new DataReceiver(socket.getInputStream(),mCallback);
+          //  }
             mCallback.onTalkbackConnected();
         } catch (IOException e) {
             e.printStackTrace();

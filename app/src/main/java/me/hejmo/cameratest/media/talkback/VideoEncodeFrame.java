@@ -60,11 +60,11 @@ public class VideoEncodeFrame {
         long t = VideoEncodeFrame.getLongFromIS(is);
         byte[] tempData = new byte[s];
         int totalLen = 0;
-        int p = 0;
+        int len ;
         while(totalLen<s){
             try {
-                p += is.read(tempData,p,s-p);
-                totalLen+=p;
+                len = is.read(tempData,totalLen,s-totalLen);
+                totalLen+=len;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -75,12 +75,12 @@ public class VideoEncodeFrame {
 
     private static int getIntFromIS(InputStream is){
         byte[] intBuffer = new byte[4];
-        int len = 0;
-        int p = 0;
-        while(len < 4){
+        int totalLen = 0;
+        int len ;
+        while(totalLen < 4){
             try {
-                p += is.read(intBuffer,p,4-p);
-                len +=p;
+                len = is.read(intBuffer,totalLen,4-totalLen);
+                totalLen +=len;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -90,12 +90,12 @@ public class VideoEncodeFrame {
 
     private static long getLongFromIS(InputStream is){
         byte[] longBuffer = new byte[8];
-        int len = 0;
-        int p = 0;
-        while(len < 8){
+        int totalLen = 0;
+        int len;
+        while(totalLen < 8){
             try {
-                p += is.read(longBuffer,p,8-p);
-                len +=p;
+                len= is.read(longBuffer,totalLen,8-totalLen);
+                totalLen +=len;
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -81,6 +81,7 @@ public class MediaActivity extends AppCompatActivity {
 
     //视频对话
     private ITalkback mTalkback;
+    private String mRole;
 
     private static class MainHandler extends Handler {
         public static final int MSG_FRAME_AVAILABLE = 1;
@@ -120,9 +121,9 @@ public class MediaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_media);
 
         //get role
-        String role = getIntent().getExtras().getString("role");
-        Log.d("talkback", "role = " + role);
-        startTalkback(role);
+        mRole= getIntent().getExtras().getString("role");
+        Log.d("talkback", "role = " + mRole);
+        startTalkback(mRole);
 
         SurfaceView dispalySV = (SurfaceView) findViewById(R.id.display_surface);
         dispalySV.getHolder().addCallback(mDisplaySurfaceCallback);
@@ -250,11 +251,11 @@ public class MediaActivity extends AppCompatActivity {
     private void startTalkback(String role) {
         Log.d("talkback", "talkback role is :" + role);
         if (role.equals("initiator")) {
-            mTalkback = new Initiator(talkbackCallback);
+            mTalkback = new Initiator(talkbackCallback,role);
             Executors.newSingleThreadExecutor().execute(mTalkback);
         }
         if (role.equals("responder")) {
-            mTalkback = new Responder(talkbackCallback);
+            mTalkback = new Responder(talkbackCallback,role);
             Executors.newSingleThreadExecutor().execute(mTalkback);
         }
     }
@@ -453,7 +454,9 @@ public class MediaActivity extends AppCompatActivity {
 //                        mBuffer,
 //                        0,
 //                        info.size);
-                Log.d("talkback", "++++++++ w = " + VIDEO_WIDTH + " h: " + VIDEO_HEIGHT + " s: " + info.size + " o: " + 0);
+                if(mRole.equals("initiator")){
+                    Log.d("talkback", "++++++++ w = " + VIDEO_WIDTH + " h: " + VIDEO_HEIGHT + " s: " + info.size + " o: " + 0);
+                }
                 VideoEncodeConfig config = new VideoEncodeConfig(VIDEO_WIDTH, VIDEO_HEIGHT, info.size, 0, buffer);
                 mTalkback.addVideoEncodeConfigure(config);
             } else {
@@ -463,7 +466,9 @@ public class MediaActivity extends AppCompatActivity {
 //                        info.size,
 //                        info.presentationTimeUs,
 //                        info.flags);
-                Log.d("talkback", "++++++++ raw  s: " + info.size + " o: " + 0 + " presentTime = " + info.presentationTimeUs);
+                if(mRole.equals("initiator")){
+                    Log.d("talkback", "++++++++ raw  s: " + info.size + " o: " + 0 + " presentTime = " + info.presentationTimeUs);
+                }
                 VideoEncodeFrame frame = new VideoEncodeFrame(info.size, 0, info.flags, info.presentationTimeUs, buffer);
                 mTalkback.addVideoEncodeFrame(frame);
             }

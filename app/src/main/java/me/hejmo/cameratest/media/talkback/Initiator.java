@@ -17,8 +17,8 @@ public class Initiator extends ITalkback {
 
     private ServerSocket mServerSocket ;
 
-    public Initiator(TalkbackCallback callback) {
-        super(callback);
+    public Initiator(TalkbackCallback callback,String role) {
+        super(callback,role);
     }
 
     @Override

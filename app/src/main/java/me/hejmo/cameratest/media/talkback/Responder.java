@@ -14,8 +14,8 @@ import me.hejmo.cameratest.media.Contract;
 public class Responder extends ITalkback {
 
 
-    public Responder(TalkbackCallback callback) {
-        super(callback);
+    public Responder(TalkbackCallback callback,String role) {
+        super(callback,role);
     }
 
     @Override

@@ -70,12 +70,12 @@ public class DataReceiver {
                     if(type == ITalkback.VIDEO_ENCODE_CONFIGURE){
                         VideoEncodeConfig config = VideoEncodeConfig.getConfig(inputStream);
                         mCallback.onConfig(config);
-                        Log.d("talkback","--------- config  = " + config.toString() + "  total = " + config.getBytes().length);
+                       // Log.d("talkback","--------- config  = " + config.toString() + "  total = " + config.getBytes().length + "  last = " + config.data[config.data.length-1]);
                     }
                     if(type == ITalkback.VIDEO_ENCODE_FRAME){
                         VideoEncodeFrame frame = VideoEncodeFrame.getFrame(inputStream);
                         mCallback.onNewFrame(frame);
-                        Log.d("talkback","--------- frame  = " + frame.toString() + "  total = " + frame.getBytes().length);
+                       // Log.d("talkback","--------- frame  = " + frame.toString() + "  total = " + frame.getBytes().length + "  last = " + frame.data[frame.data.length-1]);
                     }
 
                 } catch (IOException e) {
