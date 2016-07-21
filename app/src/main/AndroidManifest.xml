@@ -52,10 +52,8 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
             android:name=".media.MediaActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
-            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:taskAffinity="me.hejmo.cameratest.media.MediaActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">

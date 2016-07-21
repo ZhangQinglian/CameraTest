@@ -13,7 +13,15 @@ public class DataReceiver {
     private InputStream mInputStream;
 
     private ReadWorker mWorker;
-    public DataReceiver(InputStream inputStream){
+
+    private ReceiverCallback mCallback;
+
+    public interface ReceiverCallback{
+        void onConfig(VideoEncodeConfig config);
+        void onNewFrame(VideoEncodeFrame frame);
+    }
+    public DataReceiver(InputStream inputStream,ReceiverCallback callback){
+        mCallback = callback;
         mInputStream = inputStream;
 
     }
@@ -61,12 +69,13 @@ public class DataReceiver {
                     Log.d("talkback","type = " + type);
                     if(type == ITalkback.VIDEO_ENCODE_CONFIGURE){
                         VideoEncodeConfig config = VideoEncodeConfig.getConfig(inputStream);
-
-                        Log.d("talkback","--------- config  = " + config.toString() + "  size = " + config.getBytes().length);
+                        mCallback.onConfig(config);
+                        Log.d("talkback","--------- config  = " + config.toString() + "  total = " + config.getBytes().length);
                     }
-                    if(type == ITalkback.VIDEO_ENCODE_FRAME){
+                    if(type == ITalkback.VIDEO_ENCODE_CONFIGURE){
                         VideoEncodeFrame frame = VideoEncodeFrame.getFrame(inputStream);
-                        Log.d("talkback","--------- frame  = " + frame.toString() + "  size = " + frame.getBytes().length);
+                        mCallback.onNewFrame(frame);
+                        Log.d("talkback","--------- frame  = " + frame.toString() + "  total = " + frame.getBytes().length);
                     }
 
                 } catch (IOException e) {

@@ -118,7 +118,7 @@ public class MediaActivity extends AppCompatActivity {
 
         //get role
         String role = getIntent().getExtras().getString("role");
-        Log.d("talkback","role = " + role);
+        Log.d("talkback", "role = " + role);
         startTalkback(role);
 
         SurfaceView dispalySV = (SurfaceView) findViewById(R.id.display_surface);
@@ -152,7 +152,7 @@ public class MediaActivity extends AppCompatActivity {
         });
 
         //show ip
-        Toast.makeText(this,"ip : " + getIp(),Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "ip : " + getIp(), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -193,7 +193,7 @@ public class MediaActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Log.d("talkback","mediaActivity destroy");
+        Log.d("talkback", "mediaActivity destroy");
         super.onDestroy();
         try {
             mTalkback.close();
@@ -203,6 +203,25 @@ public class MediaActivity extends AppCompatActivity {
     }
 
     private ITalkback.TalkbackCallback talkbackCallback = new ITalkback.TalkbackCallback() {
+        @Override
+        public void onConfig(VideoEncodeConfig config) {
+            mDecoder.configure(mReceiveSurfaceView.getHolder().getSurface(),
+                    config.width,
+                    config.height,
+                    config.data,
+                    config.offset,
+                    config.size);
+        }
+
+        @Override
+        public void onNewFrame(VideoEncodeFrame frame) {
+            mDecoder.decodeSample(frame.data,
+                    frame.offset,
+                    frame.size,
+                    frame.presentTime,
+                    frame.flag);
+        }
+
         @Override
         public void onTalkbackConnected() {
 
@@ -214,27 +233,29 @@ public class MediaActivity extends AppCompatActivity {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if(mEncoder.getInputSurface() != null){
+                    if (mEncoder.getInputSurface() != null) {
                         mCamera.startPreview();
                         mEncoderSurface = new WindowSurface(mEglCore, mEncoder.getInputSurface(), true);
-                    }else{
-                        mHandler.postDelayed(this,100);
+                    } else {
+                        mHandler.postDelayed(this, 100);
                     }
                 }
             });
         }
     };
-    private void startTalkback(String role){
-        Log.d("talkback","talkback role is :" + role);
-        if(role.equals("initiator")){
+
+    private void startTalkback(String role) {
+        Log.d("talkback", "talkback role is :" + role);
+        if (role.equals("initiator")) {
             mTalkback = new Initiator(talkbackCallback);
             Executors.newSingleThreadExecutor().execute(mTalkback);
         }
-        if(role.equals("responder")){
+        if (role.equals("responder")) {
             mTalkback = new Responder(talkbackCallback);
             Executors.newSingleThreadExecutor().execute(mTalkback);
         }
     }
+
     private void openCamera(int desiredWidth, int desiredHeight, int desiredFps) {
         if (mCamera != null) {
             throw new RuntimeException("camera already initialized");
@@ -375,7 +396,6 @@ public class MediaActivity extends AppCompatActivity {
             }
 
 
-
         }
 
         @Override
@@ -393,7 +413,6 @@ public class MediaActivity extends AppCompatActivity {
     }
 
     class MyEncoder extends VideoEncoder {
-
 
 
         public MyEncoder() {
@@ -433,8 +452,8 @@ public class MediaActivity extends AppCompatActivity {
 //                        mBuffer,
 //                        0,
 //                        info.size);
-                Log.d("talkback","++++++++ w = " + VIDEO_WIDTH + " h: " + VIDEO_HEIGHT + " s: " + info.size + " o: " + 0 );
-                VideoEncodeConfig config = new VideoEncodeConfig(VIDEO_WIDTH,VIDEO_HEIGHT,info.size,0,mBuffer);
+                Log.d("talkback", "++++++++ w = " + VIDEO_WIDTH + " h: " + VIDEO_HEIGHT + " s: " + info.size + " o: " + 0);
+                VideoEncodeConfig config = new VideoEncodeConfig(VIDEO_WIDTH, VIDEO_HEIGHT, info.size, 0, mBuffer);
                 mTalkback.addVideoEncodeConfigure(config);
             } else {
                 // pass byte[] to decoder's queue to render asap
@@ -443,15 +462,15 @@ public class MediaActivity extends AppCompatActivity {
 //                        info.size,
 //                        info.presentationTimeUs,
 //                        info.flags);
-                Log.d("talkback","++++++++ raw  s: " + info.size + " o: " + 0 + " presentTime = " + info.presentationTimeUs );
-                VideoEncodeFrame frame = new VideoEncodeFrame(info.size,0,info.flags,info.presentationTimeUs,mBuffer);
+                Log.d("talkback", "++++++++ raw  s: " + info.size + " o: " + 0 + " presentTime = " + info.presentationTimeUs);
+                VideoEncodeFrame frame = new VideoEncodeFrame(info.size, 0, info.flags, info.presentationTimeUs, mBuffer);
                 mTalkback.addVideoEncodeFrame(frame);
             }
         }
     }
 
-    private String getIp(){
-        WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+    private String getIp() {
+        WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wm.getConnectionInfo();
         return intToIp(info.getIpAddress());
     }

@@ -31,7 +31,7 @@ public abstract class ITalkback implements Runnable, Closeable,DataSender.Sender
 
     private TalkbackCallback mCallback;
 
-    public interface TalkbackCallback{
+    public interface TalkbackCallback extends DataReceiver.ReceiverCallback{
         void onTalkbackConnected();
         void onTalkbackStart();
     }
@@ -76,8 +76,8 @@ public abstract class ITalkback implements Runnable, Closeable,DataSender.Sender
     public void onConnected(Socket socket){
         try {
             mSender = new DataSender(socket.getOutputStream(),this);
-            mReceiver = new DataReceiver(socket.getInputStream());
-            mCallback.onTalkbackConnected();;
+            mReceiver = new DataReceiver(socket.getInputStream(),mCallback);
+            mCallback.onTalkbackConnected();
         } catch (IOException e) {
             e.printStackTrace();
         }
