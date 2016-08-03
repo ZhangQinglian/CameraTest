@@ -18,7 +18,12 @@ public class Contract {
     /**
      * 视频帧率
      */
-    public static final int DESIRED_PREVIEW_FPS = 15;
+    public static final int DESIRED_PREVIEW_FPS = 8;
+
+
+    public static final String VIDEO_FORMAT = "video/avc";
+    public static final int VIDEO_I_FRAME_INTERVAL = 2;
+    public static final int VIDEO_BITRATE = 1000 * 800;
 
     /**
      * 视频对话socket的端口号

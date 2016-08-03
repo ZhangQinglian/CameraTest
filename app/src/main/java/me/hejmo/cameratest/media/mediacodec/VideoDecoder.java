@@ -10,6 +10,8 @@ import android.view.Surface;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import me.hejmo.cameratest.media.Contract;
+
 /**
  * Created by vladlichonos on 6/5/15.
  */
@@ -63,12 +65,12 @@ public class VideoDecoder implements VideoCodec {
             if (mConfigured) {
                 throw new IllegalStateException("Decoder is already configured");
             }
-            MediaFormat format = MediaFormat.createVideoFormat(VIDEO_FORMAT, width, height);
+            MediaFormat format = MediaFormat.createVideoFormat(Contract.VIDEO_FORMAT, width, height);
             // little tricky here, csd-0 is required in order to configure the codec properly
             // it is basically the first sample from encoder with flag: BUFFER_FLAG_CODEC_CONFIG
             format.setByteBuffer("csd-0", csd0);
             try {
-                mCodec = MediaCodec.createDecoderByType(VIDEO_FORMAT);
+                mCodec = MediaCodec.createDecoderByType(Contract.VIDEO_FORMAT);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to create codec", e);
             }

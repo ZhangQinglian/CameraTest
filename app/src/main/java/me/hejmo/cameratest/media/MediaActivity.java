@@ -88,8 +88,6 @@ public class MediaActivity extends AppCompatActivity {
 
         private WeakReference<MediaActivity> mWeakActivity;
 
-        private int mCount = 0;
-
         public MainHandler(MediaActivity activity) {
             mWeakActivity = new WeakReference<MediaActivity>(activity);
         }
@@ -272,8 +270,8 @@ public class MediaActivity extends AppCompatActivity {
         mCameraPreviewThousandFps = CameraUtils.chooseFixedPreviewFps(parms, desiredFps * 1000);
         parms.setRecordingHint(true);
 
-        parms.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
-        parms.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        //parms.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+        //parms.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         parms.setRotation(0);
         //如果需要自动对焦，这句一定要加
         mCamera.cancelAutoFocus();
@@ -454,9 +452,6 @@ public class MediaActivity extends AppCompatActivity {
 //                        mBuffer,
 //                        0,
 //                        info.size);
-                if(mRole.equals("initiator")){
-                    Log.d("talkback", "++++++++ w = " + VIDEO_WIDTH + " h: " + VIDEO_HEIGHT + " s: " + info.size + " o: " + 0);
-                }
                 VideoEncodeConfig config = new VideoEncodeConfig(VIDEO_WIDTH, VIDEO_HEIGHT, info.size, 0, buffer);
                 mTalkback.addVideoEncodeConfigure(config);
             } else {
@@ -466,9 +461,7 @@ public class MediaActivity extends AppCompatActivity {
 //                        info.size,
 //                        info.presentationTimeUs,
 //                        info.flags);
-                if(mRole.equals("initiator")){
-                    Log.d("talkback", "++++++++ raw  s: " + info.size + " o: " + 0 + " presentTime = " + info.presentationTimeUs);
-                }
+
                 VideoEncodeFrame frame = new VideoEncodeFrame(info.size, 0, info.flags, info.presentationTimeUs, buffer);
                 mTalkback.addVideoEncodeFrame(frame);
             }

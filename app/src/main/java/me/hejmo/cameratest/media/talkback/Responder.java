@@ -28,7 +28,7 @@ public class Responder extends ITalkback {
     public void run() {
 
         Log.d("talkback","Responder is running");
-        String ip = "172.16.10.49";
+        String ip = "172.16.10.42";
         try {
             mSocket = new Socket(ip, Contract.TALK_BACK_PORT);
             Log.d("talkback","connect socket successful");

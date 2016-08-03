@@ -56,6 +56,8 @@ public class DataSender {
             this.outputStream = os;
         }
 
+        private long time ;
+
         public void setRunning(boolean runnung){
             this.running = runnung;
         }
@@ -65,12 +67,13 @@ public class DataSender {
                 try {
                     if(outputStream != null){
                         if(mCallback != null){
+                            time = System.currentTimeMillis();
                             byte[] data = mCallback.getData();
-
-                            Log.d("talkback","total size = " + data.length + "   last + " + data[data.length-1]);
 
                             outputStream.write(data);
                             outputStream.flush();
+                            time = System.currentTimeMillis() - time ;
+                            Log.d("talkback","send a frame spend " + time + " ms");
                         }
                     }
                 } catch (IOException e) {

@@ -10,6 +10,8 @@ import android.view.Surface;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import me.hejmo.cameratest.media.Contract;
+
 /**
  * Created by vladlichonos on 6/5/15.
  */
@@ -153,15 +155,15 @@ public class VideoEncoder implements VideoCodec {
 
         void prepare() {
             // configure video output
-            MediaFormat format = MediaFormat.createVideoFormat(VIDEO_FORMAT, mWidth, mHeight);
+            MediaFormat format = MediaFormat.createVideoFormat(Contract.VIDEO_FORMAT, mWidth, mHeight);
             format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
                               MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, VIDEO_BITRATE);
-            format.setInteger(MediaFormat.KEY_FRAME_RATE, VIDEO_FRAME_PER_SECOND);
-            format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, VIDEO_I_FRAME_INTERVAL);
+            format.setInteger(MediaFormat.KEY_BIT_RATE, Contract.VIDEO_BITRATE);
+            format.setInteger(MediaFormat.KEY_FRAME_RATE, Contract.DESIRED_PREVIEW_FPS);
+            format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, Contract.VIDEO_I_FRAME_INTERVAL);
 
             try {
-                mCodec = MediaCodec.createEncoderByType(VIDEO_FORMAT);
+                mCodec = MediaCodec.createEncoderByType(Contract.VIDEO_FORMAT);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

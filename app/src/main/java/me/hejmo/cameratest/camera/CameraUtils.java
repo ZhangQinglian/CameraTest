@@ -130,8 +130,8 @@ public class CameraUtils {
     public static Camera getCameraInstance() {
         Camera c = null;
         try {
-            if(getBackCameraId() != -1){
-                c = Camera.open(getBackCameraId());
+            if(getFrontCameraId() != -1){
+                c = Camera.open(getFrontCameraId());
             }else{
                 c = Camera.open();
             }
@@ -148,6 +148,18 @@ public class CameraUtils {
         for (int i = 0; i < numberOfCameras; i++) {
             Camera.getCameraInfo(i, cameraInfo);
             if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int getFrontCameraId(){
+        int numberOfCameras = Camera.getNumberOfCameras();
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        for (int i = 0; i < numberOfCameras; i++) {
+            Camera.getCameraInfo(i, cameraInfo);
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                 return i;
             }
         }
