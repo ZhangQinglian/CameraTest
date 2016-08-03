@@ -48,6 +48,8 @@ public class DataReceiver {
 
         private InputStream inputStream;
 
+        private long time ;
+
         public ReadWorker(InputStream is){
             this.inputStream = is;
         }
@@ -66,18 +68,17 @@ public class DataReceiver {
                         running = false ;
                         break;
                     }
-                    Log.d("talkback","type = " + type);
+                    time = System.currentTimeMillis();
                     if(type == ITalkback.VIDEO_ENCODE_CONFIGURE){
                         VideoEncodeConfig config = VideoEncodeConfig.getConfig(inputStream);
                         mCallback.onConfig(config);
-                       // Log.d("talkback","--------- config  = " + config.toString() + "  total = " + config.getBytes().length + "  last = " + config.data[config.data.length-1]);
                     }
                     if(type == ITalkback.VIDEO_ENCODE_FRAME){
                         VideoEncodeFrame frame = VideoEncodeFrame.getFrame(inputStream);
                         mCallback.onNewFrame(frame);
-                       // Log.d("talkback","--------- frame  = " + frame.toString() + "  total = " + frame.getBytes().length + "  last = " + frame.data[frame.data.length-1]);
                     }
-
+                    time = System.currentTimeMillis() - time ;
+                    Log.d("talkback","receive a frame spend = " + time + " ms");
                 } catch (IOException e) {
                     if(inputStream != null){
                         Log.d("talkback","input stream close");
