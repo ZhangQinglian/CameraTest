@@ -3,8 +3,6 @@ package me.hejmo.cameratest.camera;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.hardware.Camera;
@@ -53,8 +51,6 @@ public class CameraHolder {
     private CameraCallback mCallback;
 
     private CameraRawFrames mCameraFrames;
-
-    private CameraSender mCameraSender;
 
     private MyOrientationEventListener myOrientationEventListener;
 
@@ -146,10 +142,6 @@ public class CameraHolder {
 
     public void doReleaseCamera() {
         synchronized (mReleaseFlag) {
-            if (mCameraSender != null) {
-                mCameraSender.close();
-                mCameraSender = null;
-            }
 
             mCamera.stopPreview();
             mCamera.setPreviewCallback(null);
@@ -279,12 +271,6 @@ public class CameraHolder {
         this.mCameraPermission = mCameraPermission;
     }
 
-
-    public void registerCameraSender(CameraSender sender) {
-        mCameraSender = sender;
-        mCameraSender.start();
-    }
-
     private class CameraRawFrames implements Camera.PreviewCallback {
 
         private int skip = 1;
@@ -297,18 +283,7 @@ public class CameraHolder {
 
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            if (data != null) {
-                if (mCameraSender != null) {
-
-                    if (count % skip == 0) {
-                        mCameraSender.sendCameraFrame(new CameraFrame(data, System.currentTimeMillis()));
-                    }
-                    count++;
-                    if (count == Long.MAX_VALUE) {
-                        count = 0;
-                    }
-                }
-            }
+            // do with the raw data
         }
     }
 
