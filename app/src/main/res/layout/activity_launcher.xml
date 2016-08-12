@@ -11,26 +11,11 @@
     tools:context="me.hejmo.cameratest.camera.Launcher">
 
     <Button
-        android:id="@+id/just_camera"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="Just a camera"/>
-    <View
-        android:id="@+id/split"
-        android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@android:color/white"
-        android:layout_below="@id/just_camera"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"/>
-    <Button
         android:id="@+id/monitor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="monitor"
-        android:textSize="18sp"
-        android:layout_below="@id/split"/>
+        android:textSize="18sp"/>
     <EditText
         android:id="@+id/ip_last"
         android:layout_below="@id/monitor"

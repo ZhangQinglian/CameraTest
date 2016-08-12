@@ -21,19 +21,10 @@ public class Launcher extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
 
-        Button justACamera = (Button) findViewById(R.id.just_camera);
         Button monitor = (Button) findViewById(R.id.monitor);
         Button camera = (Button) findViewById(R.id.camera);
         TextView ip = (TextView) findViewById(R.id.ip);
         final EditText ip_last = (EditText) findViewById(R.id.ip_last);
-
-        justACamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Launcher.this, CameraActivity.class);
-                startActivity(intent);
-            }
-        });
         monitor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
