@@ -12,12 +12,6 @@
         >
     </me.hejmo.cameratest.camera.CameraPreview>
 
-    <me.hejmo.cameratest.camera.CameraCover
-        android:id="@+id/camera_cover"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        />
-
     <RelativeLayout
         android:id="@+id/camera_action_area"
         android:layout_width="match_parent"

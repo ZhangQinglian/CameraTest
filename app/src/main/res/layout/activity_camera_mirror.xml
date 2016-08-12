@@ -10,11 +10,6 @@
         android:layout_height="fill_parent"
         >
     </me.hejmo.cameratest.camera.CameraMirrorPreview>
-    <me.hejmo.cameratest.camera.CameraCover
-        android:id="@+id/camera_cover"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
 
     <RelativeLayout
         android:id="@+id/camera_action_area"

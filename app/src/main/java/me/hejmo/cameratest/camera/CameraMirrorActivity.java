@@ -33,7 +33,6 @@ import me.hejmo.cameratest.R;
 public class CameraMirrorActivity extends AppCompatActivity {
 
 
-    private CameraCover mCameraCover;
     private CameraMirrorPreview mCameraMirroPreivew;
     private RelativeLayout mCameraActionArea ;
 
@@ -47,7 +46,6 @@ public class CameraMirrorActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        mCameraCover = (CameraCover) findViewById(R.id.camera_cover);
         mCameraMirroPreivew = (CameraMirrorPreview) findViewById(R.id.camera_mirror_preview);
         Button captureButton = (Button) findViewById(R.id.button_capture);
         assert captureButton != null;
@@ -55,7 +53,6 @@ public class CameraMirrorActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mCameraCover.startShutter();
                     }
                 }
         );
@@ -73,7 +70,6 @@ public class CameraMirrorActivity extends AppCompatActivity {
                 while (true) {
                     Log.d("camera_test", "serverSocket before");
                     Socket s = serverSocket.accept();
-                    showCoverView();
                     Log.d("camera_test", "serverSocket after");
                     CameraMirrorDrawerTask drawerTask = new CameraMirrorDrawerTask();
                     Executors.newSingleThreadExecutor().execute(drawerTask);
@@ -146,14 +142,6 @@ public class CameraMirrorActivity extends AppCompatActivity {
 
     }
 
-    private void showCoverView(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mCameraCover.setVisibility(View.INVISIBLE);
-            }
-        });
-    }
     private boolean hasNavbar(){
         boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
         boolean hasHomeKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_HOME);

@@ -38,7 +38,6 @@ import me.hejmo.cameratest.ThumbManager;
 public class CameraActivity extends BaseActivity implements CameraHolder.CameraCallback{
 
     private CameraHolder mCameraHolder;
-    private CameraCover mCameraCover;
     private Handler mHandler;
     private RelativeLayout mCameraActionArea ;
     private CircleImageView mPictureThumbnail;
@@ -54,9 +53,7 @@ public class CameraActivity extends BaseActivity implements CameraHolder.CameraC
         super.onCreate(savedInstanceState);
         Log.d(CameraPreview.TAG, " onCreate ");
         ip = getIntent().getStringExtra("ip");
-        if(ip == null || ip.trim().length() == 0){
-            throw new RuntimeException("ip is null");
-        }
+
         mCameraHolder = CameraApplication.getInstance().getCameraHolder();
         mCameraHolder.setCameraCallback(this);
         mHandler = new Handler(getMainLooper());
@@ -67,7 +64,6 @@ public class CameraActivity extends BaseActivity implements CameraHolder.CameraC
 
 
     private void initView() {
-        mCameraCover = (CameraCover) findViewById(R.id.camera_cover);
         Button captureButton = (Button) findViewById(R.id.button_capture);
         assert captureButton != null;
         captureButton.setOnClickListener(
@@ -109,15 +105,15 @@ public class CameraActivity extends BaseActivity implements CameraHolder.CameraC
     @Override
     public void onCameraPreviewed() {
         Log.d(CameraPreview.TAG, "   onCameraPreviewed");
-        mCameraCover.setVisibility(View.GONE);
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(new SendCameraFramesTask());
+        if(ip!= null && ip.trim().length()>0){
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            executorService.execute(new SendCameraFramesTask());
+        }
     }
 
     @Override
     public void onCameraReleased() {
         Log.d(CameraPreview.TAG, "   onCameraReleased");
-        mCameraCover.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -133,7 +129,6 @@ public class CameraActivity extends BaseActivity implements CameraHolder.CameraC
 
     @Override
     public void onBackPressed() {
-        mCameraCover.setVisibility(View.VISIBLE);
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
