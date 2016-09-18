@@ -24,7 +24,7 @@ public abstract class ITalkback implements Runnable, Closeable,DataSender.Sender
 
     public static final String ROLE_RESPONDER = "responder";
 
-    public BlockingQueue<VideoEncodeConfig> mConfigs = new LinkedBlockingQueue<>(1);
+    public BlockingQueue<VideoEncodeConfig> mConfigs = new LinkedBlockingQueue<>();
 
     public BlockingQueue<VideoEncodeFrame> mFrames = new LinkedBlockingQueue<>();
 

@@ -5,6 +5,7 @@ import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.os.Build;
+import android.util.Log;
 import android.view.Surface;
 
 import java.io.IOException;
@@ -56,6 +57,13 @@ public class VideoEncoder implements VideoCodec {
         }
     }
 
+    public boolean isRunning(){
+        if(mWorker != null){
+            return mWorker.getRunning();
+        }
+        return false;
+    }
+
     class Worker extends Thread {
 
         MediaCodec.BufferInfo mBufferInfo;
@@ -77,6 +85,9 @@ public class VideoEncoder implements VideoCodec {
             mRunning = running;
         }
 
+        public boolean getRunning(){
+            return mRunning;
+        }
         @Override
         public void run() {
             prepare();

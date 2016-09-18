@@ -46,10 +46,18 @@ public class VideoDecoder implements VideoCodec {
         }
     }
 
+    public boolean isRunning(){
+        if(mWorker != null){
+            return mWorker.getRunning();
+        }
+        return false;
+    }
+
     class Worker extends Thread {
 
         volatile boolean mRunning;
         MediaCodec mCodec;
+        // todo: 考虑放在VideoDecoder中,因为整个视频周期只configure一次,但Worker可能会因为视频暂停被初始化多次
         volatile boolean mConfigured;
         long mTimeoutUs;
 
@@ -61,6 +69,9 @@ public class VideoDecoder implements VideoCodec {
             mRunning = running;
         }
 
+        public boolean getRunning(){
+            return mRunning;
+        }
         public void configure(Surface surface, int width, int height, ByteBuffer csd0) {
             if (mConfigured) {
                 throw new IllegalStateException("Decoder is already configured");

@@ -120,7 +120,7 @@ public class MediaActivity extends AppCompatActivity {
 
         //get role
         mRole= getIntent().getExtras().getString("role");
-        Log.d("talkback", "role = " + mRole);
+        Logly.d(TAG, "role = " + mRole);
         startTalkback(mRole);
 
         SurfaceView dispalySV = (SurfaceView) findViewById(R.id.display_surface);
@@ -137,8 +137,10 @@ public class MediaActivity extends AppCompatActivity {
         mReceiveSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                Log.d("scott", "receive surface create");
+                Logly.d(TAG, "receive SV create");
+                // todo:decoder的生命周期考虑跟随RecevierSV
                 mDecoder.start();
+                // todo:encoder的生命周期考虑跟随DisplaySV
                 mEncoder.start();
             }
 
@@ -149,7 +151,7 @@ public class MediaActivity extends AppCompatActivity {
 
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
-
+                Logly.d(TAG, "Receiver SV destroyed");
             }
         });
 
@@ -161,6 +163,7 @@ public class MediaActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Logly.d(TAG, "onResume");
         // Ideally, the frames from the camera are at the same resolution as the input to
         // the video encoder so we don't have to scale.
         openCamera(VIDEO_WIDTH, VIDEO_HEIGHT, DESIRED_PREVIEW_FPS);
@@ -169,7 +172,7 @@ public class MediaActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
+        Logly.d(TAG, "onPause");
         releaseCamera();
 
 
@@ -189,13 +192,13 @@ public class MediaActivity extends AppCompatActivity {
             mEglCore.release();
             mEglCore = null;
         }
-        Log.d("media", "onPause() done");
+        Logly.d(TAG, "onPause() done");
 
     }
 
     @Override
     protected void onDestroy() {
-        Log.d("talkback", "mediaActivity destroy");
+        Logly.d(TAG, "mediaActivity destroy");
         super.onDestroy();
         try {
             mTalkback.close();
@@ -207,6 +210,7 @@ public class MediaActivity extends AppCompatActivity {
     private ITalkback.TalkbackCallback talkbackCallback = new ITalkback.TalkbackCallback() {
         @Override
         public void onConfig(VideoEncodeConfig config) {
+            //configure只会有一次,这里安全不做处理
             mDecoder.configure(mReceiveSurfaceView.getHolder().getSurface(),
                     config.width,
                     config.height,
@@ -217,6 +221,7 @@ public class MediaActivity extends AppCompatActivity {
 
         @Override
         public void onNewFrame(VideoEncodeFrame frame) {
+            // todo: 在decode前需要判断decoder是否已经start
             mDecoder.decodeSample(frame.data,
                     frame.offset,
                     frame.size,
@@ -247,7 +252,7 @@ public class MediaActivity extends AppCompatActivity {
     };
 
     private void startTalkback(String role) {
-        Log.d("talkback", "talkback role is :" + role);
+        Logly.d(TAG, "talkback role is :" + role);
         if (role.equals("initiator")) {
             mTalkback = new Initiator(talkbackCallback,role);
             Executors.newSingleThreadExecutor().execute(mTalkback);
@@ -371,7 +376,7 @@ public class MediaActivity extends AppCompatActivity {
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            Log.d("media", "surfaceCreated holder=" + holder);
+            Logly.d(TAG, "Display SV create holder=" + holder);
 
             // Set up everything that requires an EGL context.
             //
@@ -390,7 +395,7 @@ public class MediaActivity extends AppCompatActivity {
             mCameraTexture = new SurfaceTexture(mTextureId);
             mCameraTexture.setOnFrameAvailableListener(mFrameAvailableListener);
 
-            Log.d("media", "starting camera preview");
+            Logly.d(TAG, "set camera preview");
             try {
                 mCamera.setPreviewTexture(mCameraTexture);
             } catch (IOException ioe) {
@@ -402,14 +407,16 @@ public class MediaActivity extends AppCompatActivity {
 
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            Log.d("media", "surfaceChanged fmt=" + format + " size=" + width + "x" + height +
+            Logly.d(TAG, "Display SV changedfmt=" + format + " size=" + width + "x" + height +
                     " holder=" + holder);
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            Log.d("media", "surfaceDestroyed holder=" + holder);
+            Logly.d(TAG, "Display SV Destroyed holder=" + holder);
+            //todo: encoder生命周期建议考虑跟随DisplaySV
             mEncoder.stop();
+            //todo: decoder生命周期建议考虑跟随ReceiverSV
             mDecoder.stop();
         }
     }

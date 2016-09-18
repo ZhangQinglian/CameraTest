@@ -25,5 +25,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.zql.android:logly:1.1'
     compile 'com.zql.android:lolly:1.1'
-    compile files('libs/weiboSDKCore_3.1.2.jar')
 }
