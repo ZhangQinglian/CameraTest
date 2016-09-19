@@ -22,7 +22,6 @@ import com.zqlite.android.logly.Logly;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 
 import me.hejmo.cameratest.R;
@@ -49,7 +48,7 @@ public class MediaActivity extends AppCompatActivity {
 
     //callback
     private FrameAvailableListener mFrameAvailableListener = new FrameAvailableListener();
-    private SurfaceLifeCallback mDisplaySurfaceCallback = new SurfaceLifeCallback();
+    private DisplaySurfaceLifeCallback mDisplaySurfaceCallback = new DisplaySurfaceLifeCallback();
 
     //media
     private EglCore mEglCore;
@@ -82,6 +81,8 @@ public class MediaActivity extends AppCompatActivity {
     //视频对话
     private ITalkback mTalkback;
     private String mRole;
+
+    private VideoEncodeConfig mConfig = null;
 
     private static class MainHandler extends Handler {
         public static final int MSG_FRAME_AVAILABLE = 1;
@@ -140,8 +141,14 @@ public class MediaActivity extends AppCompatActivity {
                 Logly.d(TAG, "receive SV create");
                 // todo:decoder的生命周期考虑跟随RecevierSV
                 mDecoder.start();
-                // todo:encoder的生命周期考虑跟随DisplaySV
-                mEncoder.start();
+                if(mConfig != null){
+                    mDecoder.configure(mReceiveSurfaceView.getHolder().getSurface(),
+                            mConfig.width,
+                            mConfig.height,
+                            mConfig.data,
+                            mConfig.offset,
+                            mConfig.size);
+                }
             }
 
             @Override
@@ -152,6 +159,8 @@ public class MediaActivity extends AppCompatActivity {
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
                 Logly.d(TAG, "Receiver SV destroyed");
+                //todo: decoder生命周期建议考虑跟随ReceiverSV
+                mDecoder.stop();
             }
         });
 
@@ -166,13 +175,14 @@ public class MediaActivity extends AppCompatActivity {
         Logly.d(TAG, "onResume");
         // Ideally, the frames from the camera are at the same resolution as the input to
         // the video encoder so we don't have to scale.
-        openCamera(VIDEO_WIDTH, VIDEO_HEIGHT, DESIRED_PREVIEW_FPS);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Logly.d(TAG, "onPause");
+        mTalkback.pause();
         releaseCamera();
 
 
@@ -192,6 +202,7 @@ public class MediaActivity extends AppCompatActivity {
             mEglCore.release();
             mEglCore = null;
         }
+
         Logly.d(TAG, "onPause() done");
 
     }
@@ -208,8 +219,10 @@ public class MediaActivity extends AppCompatActivity {
     }
 
     private ITalkback.TalkbackCallback talkbackCallback = new ITalkback.TalkbackCallback() {
+
         @Override
         public void onConfig(VideoEncodeConfig config) {
+            Log.d("scott","decoder config");
             //configure只会有一次,这里安全不做处理
             mDecoder.configure(mReceiveSurfaceView.getHolder().getSurface(),
                     config.width,
@@ -217,11 +230,13 @@ public class MediaActivity extends AppCompatActivity {
                     config.data,
                     config.offset,
                     config.size);
+            mConfig = config;
         }
 
         @Override
         public void onNewFrame(VideoEncodeFrame frame) {
             // todo: 在decode前需要判断decoder是否已经start
+
             mDecoder.decodeSample(frame.data,
                     frame.offset,
                     frame.size,
@@ -236,18 +251,7 @@ public class MediaActivity extends AppCompatActivity {
 
         @Override
         public void onTalkbackStart() {
-            //当双方socket连接成功并开始读取数据后再开始镜头预览,以此确保数据的实时性。
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mEncoder.getInputSurface() != null) {
-                        mCamera.startPreview();
-                        mEncoderSurface = new WindowSurface(mEglCore, mEncoder.getInputSurface(), true);
-                    } else {
-                        mHandler.postDelayed(this, 100);
-                    }
-                }
-            });
+
         }
     };
 
@@ -290,12 +294,12 @@ public class MediaActivity extends AppCompatActivity {
         Log.i("media", "Camera config: " + previewFacts);
 
         // Set the preview aspect ratio.
-        AspectFrameLayout layout = (AspectFrameLayout) findViewById(R.id.continuousCapture_afl_display);
-        layout.setAspectRatio((double) cameraPreviewSize.height / cameraPreviewSize.width);
 
         AspectFrameLayout layout_mirror = (AspectFrameLayout) findViewById(R.id.continuousCapture_afl_receive);
         layout_mirror.setAspectRatio((double) cameraPreviewSize.height / cameraPreviewSize.width);
 
+        AspectFrameLayout layout = (AspectFrameLayout) findViewById(R.id.continuousCapture_afl_display);
+        layout.setAspectRatio((double) cameraPreviewSize.height / cameraPreviewSize.width);
     }
 
 
@@ -372,7 +376,7 @@ public class MediaActivity extends AppCompatActivity {
         }
     }
 
-    private class SurfaceLifeCallback implements SurfaceHolder.Callback {
+    private class DisplaySurfaceLifeCallback implements SurfaceHolder.Callback {
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
@@ -397,12 +401,26 @@ public class MediaActivity extends AppCompatActivity {
 
             Logly.d(TAG, "set camera preview");
             try {
+                openCamera(VIDEO_WIDTH, VIDEO_HEIGHT, DESIRED_PREVIEW_FPS);
                 mCamera.setPreviewTexture(mCameraTexture);
             } catch (IOException ioe) {
                 throw new RuntimeException(ioe);
             }
 
-
+            // todo:encoder的生命周期考虑跟随DisplaySV
+            mEncoder.start();
+            //当双方socket连接成功并开始读取数据后再开始镜头预览,以此确保数据的实时性。
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mEncoder.getInputSurface() != null) {
+                        mCamera.startPreview();
+                        mEncoderSurface = new WindowSurface(mEglCore, mEncoder.getInputSurface(), true);
+                    } else {
+                        mHandler.postDelayed(this, 100);
+                    }
+                }
+            });
         }
 
         @Override
@@ -416,8 +434,7 @@ public class MediaActivity extends AppCompatActivity {
             Logly.d(TAG, "Display SV Destroyed holder=" + holder);
             //todo: encoder生命周期建议考虑跟随DisplaySV
             mEncoder.stop();
-            //todo: decoder生命周期建议考虑跟随ReceiverSV
-            mDecoder.stop();
+
         }
     }
 
@@ -453,21 +470,10 @@ public class MediaActivity extends AppCompatActivity {
                 // this is the first and only config sample, which contains information about codec
                 // like H.264, that let's configure the decoder
 
-//                mDecoder.configure(mReceiveSurfaceView.getHolder().getSurface(),
-//                        VIDEO_WIDTH,
-//                        VIDEO_HEIGHT,
-//                        mBuffer,
-//                        0,
-//                        info.size);
                 VideoEncodeConfig config = new VideoEncodeConfig(VIDEO_WIDTH, VIDEO_HEIGHT, info.size, 0, buffer);
                 mTalkback.addVideoEncodeConfigure(config);
             } else {
                 // pass byte[] to decoder's queue to render asap
-//                mDecoder.decodeSample(mBuffer,
-//                        0,
-//                        info.size,
-//                        info.presentationTimeUs,
-//                        info.flags);
 
                 VideoEncodeFrame frame = new VideoEncodeFrame(info.size, 0, info.flags, info.presentationTimeUs, buffer);
                 mTalkback.addVideoEncodeFrame(frame);

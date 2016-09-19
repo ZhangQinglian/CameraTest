@@ -38,6 +38,8 @@ public abstract class ITalkback implements Runnable, Closeable,DataSender.Sender
 
     private String mRole;
 
+    private boolean mIsStart = false;
+
     public interface TalkbackCallback extends DataReceiver.ReceiverCallback{
         void onTalkbackConnected();
         void onTalkbackStart();
@@ -49,12 +51,27 @@ public abstract class ITalkback implements Runnable, Closeable,DataSender.Sender
     }
     public void addVideoEncodeConfigure(VideoEncodeConfig configure){
         //Log.d("talkback","add config");
-        mConfigs.add(configure);
+        /*
+         * 不管双方有没有建立连接,都需要将config保存下来。
+         **/
+        if(mConfigs != null){
+            mConfigs.add(configure);
+        }
     }
 
     public void addVideoEncodeFrame(VideoEncodeFrame frame){
         //Log.d("talkback","add frame");
-        mFrames.add(frame);
+        /*
+        * 双方没有建立连接时,拿到的视频帧丢弃
+        * */
+        if(mIsStart){
+            mFrames.add(frame);
+        }
+    }
+
+    public void pause(){
+        Log.d("scott"," ITalkback pause");
+        //mConfigs = new LinkedBlockingQueue<>();
     }
 
     @Override
@@ -103,6 +120,7 @@ public abstract class ITalkback implements Runnable, Closeable,DataSender.Sender
             mReceiver.start();
         }
         mCallback.onTalkbackStart();
+        mIsStart = true;
     }
 
     public void stopTalkback(){
@@ -123,6 +141,7 @@ public abstract class ITalkback implements Runnable, Closeable,DataSender.Sender
             }
             mSocket =null;
         }
+        mIsStart = false;
     }
 
 }

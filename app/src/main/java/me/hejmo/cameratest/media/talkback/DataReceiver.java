@@ -80,6 +80,7 @@ public class DataReceiver {
                     time = System.currentTimeMillis() - time ;
                     Log.d("talkback","receive a frame spend = " + time + " ms");
                 } catch (IOException e) {
+                    e.printStackTrace();
                     if(inputStream != null){
                         Log.d("talkback","input stream close");
                         try {

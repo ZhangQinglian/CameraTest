@@ -40,6 +40,7 @@ public class VideoDecoder implements VideoCodec {
     }
 
     public void stop() {
+        Log.d("scott","decoder stop");
         if (mWorker != null) {
             mWorker.setRunning(false);
             mWorker = null;
@@ -94,6 +95,7 @@ public class VideoDecoder implements VideoCodec {
         @SuppressWarnings("deprecation")
         public void decodeSample(byte[] data, int offset, int size, long presentationTimeUs, int flags) {
             if (mConfigured && mRunning) {
+                Log.d("scott"," decoder new frame");
                 int index = mCodec.dequeueInputBuffer(mTimeoutUs);
                 if (index >= 0) {
                     ByteBuffer buffer;
