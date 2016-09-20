@@ -1,6 +1,7 @@
 package me.hejmo.cameratest.media;
 
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.MediaCodec;
@@ -126,7 +127,8 @@ public class MediaActivity extends AppCompatActivity {
 
         SurfaceView dispalySV = (SurfaceView) findViewById(R.id.display_surface);
         dispalySV.getHolder().addCallback(mDisplaySurfaceCallback);
-
+        dispalySV.getHolder().setFormat(PixelFormat.TRANSPARENT);
+        dispalySV.setZOrderOnTop(true);
         mHandler = new MainHandler(this);
 
         mSecondsOfVideo = 0.0f;
@@ -295,11 +297,11 @@ public class MediaActivity extends AppCompatActivity {
 
         // Set the preview aspect ratio.
 
+        AspectFrameLayout layout = (AspectFrameLayout) findViewById(R.id.continuousCapture_afl_display);
+        layout.setAspectRatio((double) cameraPreviewSize.height / cameraPreviewSize.width);
         AspectFrameLayout layout_mirror = (AspectFrameLayout) findViewById(R.id.continuousCapture_afl_receive);
         layout_mirror.setAspectRatio((double) cameraPreviewSize.height / cameraPreviewSize.width);
 
-        AspectFrameLayout layout = (AspectFrameLayout) findViewById(R.id.continuousCapture_afl_display);
-        layout.setAspectRatio((double) cameraPreviewSize.height / cameraPreviewSize.width);
     }
 
 
