@@ -18,7 +18,8 @@
         android:layout_centerHorizontal="true"
         android:clickable="true"
         android:text="Initiator"
-        android:textSize="18dp" />
+        android:textSize="18dp"
+        android:elevation="0dp" />
 
     <Button
         android:id="@+id/btn_responder"
@@ -30,23 +31,4 @@
         android:text="Responder"
         android:textSize="18dp" />
 
-    <Button
-        android:id="@+id/btn_show"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_responder"
-        android:layout_centerHorizontal="true"
-        android:clickable="true"
-        android:text="show log"
-        android:textSize="18dp" />
-
-    <Button
-        android:id="@+id/btn_hide"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_show"
-        android:layout_centerHorizontal="true"
-        android:clickable="true"
-        android:text="hide log"
-        android:textSize="18dp" />
 </RelativeLayout>

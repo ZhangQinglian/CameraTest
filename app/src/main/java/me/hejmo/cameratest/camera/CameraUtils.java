@@ -165,6 +165,12 @@ public class CameraUtils {
         }
         return -1;
     }
+
+    public static int getFrontCameraDegree(){
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(getFrontCameraId(),info);
+        return info.orientation;
+    }
     public static void dumpCameraParams(Camera camera) {
         Camera.Parameters parameters = camera.getParameters();
         Log.d(CameraPreview.TAG, parameters.flatten());

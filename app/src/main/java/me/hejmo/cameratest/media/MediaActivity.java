@@ -44,7 +44,7 @@ import static me.hejmo.cameratest.media.Contract.*;
 public class MediaActivity extends AppCompatActivity {
 
 
-    public static final Logly.Tag TAG = new Logly.Tag(Logly.FLAG_THREAD_NAME, "scott", Logly.DEBUG);
+    public static final Logly.Tag TAG = new Logly.Tag(Logly.FLAG_THREAD_NAME, "mediacodec", Logly.DEBUG);
 
     //callback
     private FrameAvailableListener mFrameAvailableListener = new FrameAvailableListener();
@@ -286,7 +286,7 @@ public class MediaActivity extends AppCompatActivity {
         mCamera.cancelAutoFocus();
 
         mCamera.setParameters(parms);
-        mCamera.setDisplayOrientation(90);
+        mCamera.setDisplayOrientation(360-CameraUtils.getFrontCameraDegree());
 
         Camera.Size cameraPreviewSize = parms.getPreviewSize();
         String previewFacts = cameraPreviewSize.width + "x" + cameraPreviewSize.height +
