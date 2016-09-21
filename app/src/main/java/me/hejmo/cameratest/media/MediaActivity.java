@@ -403,7 +403,7 @@ public class MediaActivity extends AppCompatActivity {
 
             Logly.d(TAG, "set camera preview");
             try {
-                openCamera(VIDEO_WIDTH, VIDEO_HEIGHT, DESIRED_PREVIEW_FPS);
+                openCamera(holder.getSurfaceFrame().width(), holder.getSurfaceFrame().height(), DESIRED_PREVIEW_FPS);
                 mCamera.setPreviewTexture(mCameraTexture);
             } catch (IOException ioe) {
                 throw new RuntimeException(ioe);
