@@ -29,4 +29,12 @@ public class Contract {
      * 视频对话socket的端口号
      */
     public static final int TALK_BACK_PORT = 12001;
+
+    public static final String ROLE = "role";
+
+    public static final String INITIATOR = "initiator";
+
+    public static final String RESPONDER = "responder";
+
+    public static final String IP = "ip";
 }

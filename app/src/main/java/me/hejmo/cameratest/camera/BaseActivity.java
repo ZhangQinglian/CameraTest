@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import me.hejmo.cameratest.artphelper.ARTPHelper;
+import me.hejmo.cameratest.media.Contract;
 import me.hejmo.cameratest.media.MediaActivity;
 
 
@@ -88,10 +89,12 @@ public class BaseActivity extends AppCompatActivity {
 
     private void startMedia(){
         Intent preIntent = getIntent();
-        String role = preIntent.getExtras().getString("role");
-
+        String role = preIntent.getExtras().getString(Contract.ROLE);
         Intent intent = new Intent(BaseActivity.this, MediaActivity.class);
-        intent.putExtra("role",role);
+        if(role.equals(Contract.RESPONDER)){
+            intent.putExtra(Contract.IP,preIntent.getExtras().getString(Contract.IP));
+        }
+        intent.putExtra(Contract.ROLE,role);
         startActivity(intent);
         finish();
     }

@@ -85,6 +85,8 @@ public class MediaActivity extends AppCompatActivity {
 
     private VideoEncodeConfig mConfig = null;
 
+    private String mIP;
+
     private static class MainHandler extends Handler {
         public static final int MSG_FRAME_AVAILABLE = 1;
 
@@ -121,7 +123,7 @@ public class MediaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_media);
 
         //get role
-        mRole= getIntent().getExtras().getString("role");
+        mRole= getIntent().getExtras().getString(Contract.ROLE);
         Logly.d(TAG, "role = " + mRole);
         startTalkback(mRole);
 
@@ -258,13 +260,13 @@ public class MediaActivity extends AppCompatActivity {
     };
 
     private void startTalkback(String role) {
-        Logly.d(TAG, "talkback role is :" + role);
-        if (role.equals("initiator")) {
+        if (role.equals(Contract.INITIATOR)) {
             mTalkback = new Initiator(talkbackCallback,role);
             Executors.newSingleThreadExecutor().execute(mTalkback);
         }
-        if (role.equals("responder")) {
-            mTalkback = new Responder(talkbackCallback,role);
+        if (role.equals(Contract.RESPONDER)) {
+            mIP = getIntent().getExtras().getString(Contract.IP);
+            mTalkback = new Responder(talkbackCallback,role,mIP);
             Executors.newSingleThreadExecutor().execute(mTalkback);
         }
     }

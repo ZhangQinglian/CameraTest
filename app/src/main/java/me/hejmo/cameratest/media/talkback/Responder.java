@@ -13,9 +13,11 @@ import me.hejmo.cameratest.media.Contract;
  */
 public class Responder extends ITalkback {
 
+    private String ip;
 
-    public Responder(TalkbackCallback callback,String role) {
+    public Responder(TalkbackCallback callback,String role,String ip) {
         super(callback,role);
+        this.ip = ip;
     }
 
     @Override
@@ -28,7 +30,6 @@ public class Responder extends ITalkback {
     public void run() {
 
         Log.d("talkback","Responder is running");
-        String ip = "172.16.10.42";
         try {
             mSocket = new Socket(ip, Contract.TALK_BACK_PORT);
             Log.d("talkback","connect socket successful");

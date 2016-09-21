@@ -10,22 +10,47 @@
     tools:context="me.hejmo.cameratest.media.MediaLauncher">
 
 
+    <TextView
+        android:id="@+id/text_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:text="ip"/>
+
     <Button
         android:id="@+id/btn_initiator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/text_ip"
         android:layout_centerHorizontal="true"
         android:clickable="true"
         android:text="Initiator"
         android:textSize="18dp"
         android:elevation="0dp" />
-
+    <TextView
+        android:id="@+id/text_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_initiator"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:textSize="13sp"
+        android:text="确保两台手机连接同一个AP或路由器,输入发起者的IP"/>
+    <EditText
+        android:id="@+id/edit_ip"
+        android:layout_below="@id/text_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"/>
     <Button
         android:id="@+id/btn_responder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btn_initiator"
+        android:layout_below="@id/edit_ip"
         android:layout_centerHorizontal="true"
         android:clickable="true"
         android:text="Responder"
