@@ -22,7 +22,6 @@
         android:required="true" />
 
     <application
-        android:name=".camera.CameraApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -32,24 +31,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="false">
-        <activity
-            android:name=".camera.CameraActivity"
-            android:clearTaskOnLaunch="true"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
-            android:taskAffinity="me.hejmo.cameratest.MainActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"/>
-        <activity
-            android:name=".camera.CameraMirrorActivity"
-            android:clearTaskOnLaunch="true"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
-            android:taskAffinity="me.hejmo.cameratest.MainActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
             android:name=".media.MediaActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

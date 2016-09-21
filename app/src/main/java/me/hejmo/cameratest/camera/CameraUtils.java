@@ -173,7 +173,6 @@ public class CameraUtils {
     }
     public static void dumpCameraParams(Camera camera) {
         Camera.Parameters parameters = camera.getParameters();
-        Log.d(CameraPreview.TAG, parameters.flatten());
     }
 
     public static Camera.Size getSuitablePreviewSize(Camera camera, double scale) {
@@ -187,7 +186,6 @@ public class CameraUtils {
                 return lhs.width - rhs.width;
             }
         });
-        Log.d(CameraPreview.TAG, "scale : " + scale);
         List<Integer> index = new ArrayList<>(10);
         for (Camera.Size s : sizes) {
             double sc = (s.width * 1.0 / s.height);
@@ -277,38 +275,7 @@ public class CameraUtils {
                 }
             }
         }
-        Log.d(CameraPreview.TAG, "picture size " + size.width + " * " + size.height);
         return size;
-    }
-
-    public static void compressRawData(byte[] data, int quality,Point pictureSize, ByteArrayOutputStream byteArrayOutputStream) {
-
-        YuvImage yuvImage = new YuvImage(data, CameraApplication.getInstance().getCameraHolder().getCameraFormat(), pictureSize.x, pictureSize.y, null);
-
-        yuvImage.compressToJpeg(new Rect(0, 0, pictureSize.x, pictureSize.y), quality, byteArrayOutputStream);
-    }
-
-
-    public static int readPictureDegree(String path) {
-        int degree  = 0;
-        try {
-            ExifInterface exifInterface = new ExifInterface(path);
-            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    degree = 90;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    degree = 180;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    degree = 270;
-                    break;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return degree;
     }
 
     public static Bitmap rotaingImageView(int angle , Bitmap bitmap) {

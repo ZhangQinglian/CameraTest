@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.Toast;
 
 import com.zqlite.android.logly.Logly;
@@ -54,7 +55,9 @@ public class MediaActivity extends AppCompatActivity {
     //media
     private EglCore mEglCore;
     //显示绘制Camera采集的数据
-    private WindowSurface mDisplaySurface;
+    private WindowSurface mDisplayWindowSurface;
+
+    private SurfaceView mDisplaySV;
 
     //用于接收Camera的preview数据
     private SurfaceTexture mCameraTexture;
@@ -127,10 +130,10 @@ public class MediaActivity extends AppCompatActivity {
         Logly.d(TAG, "role = " + mRole);
         startTalkback(mRole);
 
-        SurfaceView dispalySV = (SurfaceView) findViewById(R.id.display_surface);
-        dispalySV.getHolder().addCallback(mDisplaySurfaceCallback);
-        dispalySV.getHolder().setFormat(PixelFormat.TRANSPARENT);
-        dispalySV.setZOrderOnTop(true);
+        mDisplaySV = (SurfaceView) findViewById(R.id.display_surface);
+        mDisplaySV.getHolder().addCallback(mDisplaySurfaceCallback);
+        mDisplaySV.getHolder().setFormat(PixelFormat.TRANSPARENT);
+        mDisplaySV.setZOrderOnTop(true);
         mHandler = new MainHandler(this);
 
         mSecondsOfVideo = 0.0f;
@@ -174,29 +177,45 @@ public class MediaActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Logly.d(TAG, "onStart()");
+        mDisplaySV.setVisibility(View.VISIBLE);
+        mReceiveSurfaceView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Logly.d(TAG, "onResume");
-        // Ideally, the frames from the camera are at the same resolution as the input to
-        // the video encoder so we don't have to scale.
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Logly.d(TAG, "onPause");
+
+
+        Logly.d(TAG, "onPause() done");
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Logly.d(TAG, "onStop()");
+        mDisplaySV.setVisibility(View.INVISIBLE);
+        mReceiveSurfaceView.setVisibility(View.INVISIBLE);
         mTalkback.pause();
         releaseCamera();
-
 
         if (mCameraTexture != null) {
             mCameraTexture.release();
             mCameraTexture = null;
         }
-        if (mDisplaySurface != null) {
-            mDisplaySurface.release();
-            mDisplaySurface = null;
+        if (mDisplayWindowSurface != null) {
+            mDisplayWindowSurface.release();
+            mDisplayWindowSurface = null;
         }
         if (mFullFrameBlit != null) {
             mFullFrameBlit.release(false);
@@ -206,9 +225,6 @@ public class MediaActivity extends AppCompatActivity {
             mEglCore.release();
             mEglCore = null;
         }
-
-        Logly.d(TAG, "onPause() done");
-
     }
 
     @Override
@@ -324,7 +340,7 @@ public class MediaActivity extends AppCompatActivity {
         }
 
         // Latch the next frame from the camera.
-        mDisplaySurface.makeCurrent();
+        mDisplayWindowSurface.makeCurrent();
         mCameraTexture.updateTexImage();
         mCameraTexture.getTransformMatrix(mTmpMatrix);
 
@@ -335,7 +351,7 @@ public class MediaActivity extends AppCompatActivity {
         GLES20.glViewport(0, 0, viewWidth, viewHeight);
         mFullFrameBlit.drawFrame(mTextureId, mTmpMatrix);
         drawExtra(mFrameNum, viewWidth, viewHeight);
-        mDisplaySurface.swapBuffers();
+        mDisplayWindowSurface.swapBuffers();
 
         mEncoderSurface.makeCurrent();
         GLES20.glViewport(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT);
@@ -394,8 +410,8 @@ public class MediaActivity extends AppCompatActivity {
             // The display surface that we use for the SurfaceView, and the encoder surface we
             // use for video, use the same EGL context.
             mEglCore = new EglCore(null, EglCore.FLAG_RECORDABLE);
-            mDisplaySurface = new WindowSurface(mEglCore, holder.getSurface(), false);
-            mDisplaySurface.makeCurrent();
+            mDisplayWindowSurface = new WindowSurface(mEglCore, holder.getSurface(), false);
+            mDisplayWindowSurface.makeCurrent();
 
             mFullFrameBlit = new FullFrameRect(
                     new Texture2dProgram(Texture2dProgram.ProgramType.TEXTURE_EXT));

@@ -31,7 +31,6 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(CameraPreview.TAG, " quick oncreate");
         //检查是否支持相机
         if (!checkCameraHardware(this)) {
             finish();
