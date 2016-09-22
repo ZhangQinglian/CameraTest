@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import me.hejmo.cameratest.artphelper.ARTPHelper;
 import me.hejmo.cameratest.media.MediaActivity;
-
+import static me.hejmo.cameratest.media.ui.TalkbackContract.*;
 
 /**
  * Created by scott on 3/31/16.
@@ -86,12 +86,12 @@ public class BaseActivity extends AppCompatActivity {
 
     private void startMedia(){
         Intent preIntent = getIntent();
-        String role = preIntent.getExtras().getString(Contract.ROLE);
+        String role = preIntent.getExtras().getString(ROLE);
         Intent intent = new Intent(BaseActivity.this, MediaActivity.class);
-        if(role.equals(Contract.RESPONDER)){
-            intent.putExtra(Contract.IP,preIntent.getExtras().getString(Contract.IP));
+        if(role.equals(RESPONDER)){
+            intent.putExtra(IP,preIntent.getExtras().getString(IP));
         }
-        intent.putExtra(Contract.ROLE,role);
+        intent.putExtra(ROLE,role);
         startActivity(intent);
         finish();
     }

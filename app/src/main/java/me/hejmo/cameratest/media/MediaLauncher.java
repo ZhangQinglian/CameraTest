@@ -15,6 +15,7 @@ import me.hejmo.cameratest.R;
 import me.hejmo.cameratest.artphelper.ARTPHelper;
 import me.hejmo.cameratest.camera.BaseActivity;
 
+import static me.hejmo.cameratest.media.ui.TalkbackContract.*;
 public class MediaLauncher extends AppCompatActivity {
 
     final ARTPHelper artpHelper = new ARTPHelper(true);
@@ -33,7 +34,7 @@ public class MediaLauncher extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MediaLauncher.this, BaseActivity.class);
-                intent.putExtra(Contract.ROLE,Contract.INITIATOR);
+                intent.putExtra(ROLE,INITIATOR);
                 startActivity(intent);
             }
         });
@@ -46,8 +47,8 @@ public class MediaLauncher extends AppCompatActivity {
                     return ;
                 }
                 Intent intent = new Intent(MediaLauncher.this, BaseActivity.class);
-                intent.putExtra(Contract.ROLE,Contract.RESPONDER);
-                intent.putExtra(Contract.IP,ip);
+                intent.putExtra(ROLE,RESPONDER);
+                intent.putExtra(IP,ip);
                 startActivity(intent);
             }
         });

@@ -1,5 +1,9 @@
 package me.hejmo.cameratest.media.ui;
 
+import android.view.Surface;
+
+import java.io.IOException;
+
 import me.hejmo.cameratest.mvpc.IContract;
 import me.hejmo.cameratest.mvpc.IPresenter;
 import me.hejmo.cameratest.mvpc.IView;
@@ -43,10 +47,20 @@ public class TalkbackContract implements IContract {
     public static final String IP = "ip";
 
     interface Presenter extends IPresenter{
-
+        void startDecoder();
+        void stopDecoder();
+        void startEncoder();
+        void stopEncoder();
+        Surface getEncoderInputSurface();
+        void configureDecoder(Surface surface, int width, int height, byte[] csd0, int offset, int size);
+        void configureDecoderAgain();
+        void decodeSample(byte[] data, int offset, int size, long presentationTimeUs, int flags);
+        void startTalkback(String role,String ip);
+        void pauseTalkbakc();
+        void closeTalkback() throws IOException;
     }
 
     interface View extends IView<Presenter>{
-
+        Surface getReceiveSV();
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.net.Socket;
+import static me.hejmo.cameratest.media.ui.TalkbackContract.*;
 
 /**
  * @author qinglian.zhang
@@ -29,7 +30,7 @@ public class Responder extends ITalkback {
 
         Log.d("talkback","Responder is running");
         try {
-            mSocket = new Socket(ip, Contract.TALK_BACK_PORT);
+            mSocket = new Socket(ip, TALK_BACK_PORT);
             Log.d("talkback","connect socket successful");
             onConnected(mSocket);
             startTalkback();

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.media.MediaCodec;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.opengl.GLES20;
@@ -26,8 +25,6 @@ import com.zqlite.android.logly.Logly;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.nio.ByteBuffer;
-import java.util.concurrent.Executors;
 
 import me.hejmo.cameratest.R;
 import me.hejmo.cameratest.camera.CameraHolder;
@@ -37,11 +34,7 @@ import me.hejmo.cameratest.media.gles.EglCore;
 import me.hejmo.cameratest.media.gles.FullFrameRect;
 import me.hejmo.cameratest.media.gles.Texture2dProgram;
 import me.hejmo.cameratest.media.gles.WindowSurface;
-import me.hejmo.cameratest.media.mediacodec.VideoDecoder;
-import me.hejmo.cameratest.media.mediacodec.VideoEncoder;
 import me.hejmo.cameratest.media.talkback.ITalkback;
-import me.hejmo.cameratest.media.talkback.Initiator;
-import me.hejmo.cameratest.media.talkback.Responder;
 import me.hejmo.cameratest.media.talkback.VideoEncodeConfig;
 import me.hejmo.cameratest.media.talkback.VideoEncodeFrame;
 
@@ -84,15 +77,8 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
     private MainHandler mHandler;
     private float mSecondsOfVideo;
 
-    private VideoEncoder mEncoder;
-    private VideoDecoder mDecoder;
-
-    //视频对话
-    private ITalkback mTalkback;
     private String mRole;
     private String mIP;
-
-    private VideoEncodeConfig mConfig = null;
 
     private View mView;
     private TalkbackContract.Presenter mPresenter;
@@ -100,6 +86,15 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
     @Override
     public void setPresenter(TalkbackContract.Presenter presenter) {
         mPresenter = presenter;
+        mPresenter.start();
+    }
+
+    @Override
+    public Surface getReceiveSV() {
+        if(mReceiveSurfaceView != null){
+            return mReceiveSurfaceView.getHolder().getSurface();
+        }
+        return null;
     }
 
     private static class MainHandler extends Handler {
@@ -192,7 +187,7 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
         Logly.d(TAG, "onStop()");
         mDisplaySV.setVisibility(View.INVISIBLE);
         mReceiveSurfaceView.setVisibility(View.INVISIBLE);
-        mTalkback.pause();
+        mPresenter.pauseTalkbakc();
         releaseCamera();
 
         if (mCameraTexture != null) {
@@ -218,7 +213,7 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
         Logly.d(TAG, "mediaActivity destroy");
         super.onDestroy();
         try {
-            mTalkback.close();
+            mPresenter.closeTalkback();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -236,8 +231,7 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
 
         mSecondsOfVideo = 0.0f;
 
-        mEncoder = new MyEncoder();
-        mDecoder = new VideoDecoder();
+
 
         mReceiveSurfaceView = (SurfaceView) mView.findViewById(R.id.receive_surface);
         mReceiveSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -245,15 +239,8 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
             public void surfaceCreated(SurfaceHolder holder) {
                 Logly.d(TAG, "receive SV create");
                 // todo:decoder的生命周期考虑跟随RecevierSV
-                mDecoder.start();
-                if(mConfig != null){
-                    mDecoder.configure(mReceiveSurfaceView.getHolder().getSurface(),
-                            mConfig.width,
-                            mConfig.height,
-                            mConfig.data,
-                            mConfig.offset,
-                            mConfig.size);
-                }
+                mPresenter.startDecoder();
+                mPresenter.configureDecoderAgain();
             }
 
             @Override
@@ -265,7 +252,7 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
             public void surfaceDestroyed(SurfaceHolder holder) {
                 Logly.d(TAG, "Receiver SV destroyed");
                 //todo: decoder生命周期建议考虑跟随ReceiverSV
-                mDecoder.stop();
+                mPresenter.stopDecoder();
             }
         });
 
@@ -275,52 +262,8 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
         return mView ;
     }
 
-    private ITalkback.TalkbackCallback talkbackCallback = new ITalkback.TalkbackCallback() {
-
-        @Override
-        public void onConfig(VideoEncodeConfig config) {
-            Log.d("scott","decoder config");
-            //configure只会有一次,这里安全不做处理
-            mDecoder.configure(mReceiveSurfaceView.getHolder().getSurface(),
-                    config.width,
-                    config.height,
-                    config.data,
-                    config.offset,
-                    config.size);
-            mConfig = config;
-        }
-
-        @Override
-        public void onNewFrame(VideoEncodeFrame frame) {
-            // todo: 在decode前需要判断decoder是否已经start
-
-            mDecoder.decodeSample(frame.data,
-                    frame.offset,
-                    frame.size,
-                    frame.presentTime,
-                    frame.flag);
-        }
-
-        @Override
-        public void onTalkbackConnected() {
-
-        }
-
-        @Override
-        public void onTalkbackStart() {
-
-        }
-    };
-
     private void startTalkback() {
-        if (mRole.equals(INITIATOR)) {
-            mTalkback = new Initiator(talkbackCallback,mRole);
-            Executors.newSingleThreadExecutor().execute(mTalkback);
-        }
-        if (mRole.equals(RESPONDER)) {
-            mTalkback = new Responder(talkbackCallback,mRole,mIP);
-            Executors.newSingleThreadExecutor().execute(mTalkback);
-        }
+        mPresenter.startTalkback(mRole,mIP);
     }
 
     private void openCamera(int desiredWidth, int desiredHeight, int desiredFps) {
@@ -464,14 +407,14 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
             }
 
             // todo:encoder的生命周期考虑跟随DisplaySV
-            mEncoder.start();
+            mPresenter.startEncoder();
             //当双方socket连接成功并开始读取数据后再开始镜头预览,以此确保数据的实时性。
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (mEncoder.getInputSurface() != null) {
+                    if (mPresenter.getEncoderInputSurface() != null) {
                         mCamera.startPreview();
-                        mEncoderSurface = new WindowSurface(mEglCore, mEncoder.getInputSurface(), true);
+                        mEncoderSurface = new WindowSurface(mEglCore, mPresenter.getEncoderInputSurface() , true);
                     } else {
                         mHandler.postDelayed(this, 100);
                     }
@@ -489,53 +432,12 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
         public void surfaceDestroyed(SurfaceHolder holder) {
             Logly.d(TAG, "Display SV Destroyed holder=" + holder);
             //todo: encoder生命周期建议考虑跟随DisplaySV
-            mEncoder.stop();
+            mPresenter.stopEncoder();
 
         }
     }
 
-    class MyEncoder extends VideoEncoder {
 
-
-        public MyEncoder() {
-            super(VIDEO_WIDTH, VIDEO_HEIGHT);
-        }
-
-        // Both of onSurfaceCreated and onSurfaceDestroyed are called from codec's thread,
-        // non-UI thread
-
-        @Override
-        protected void onSurfaceCreated(Surface surface) {
-        }
-
-        @Override
-        protected void onSurfaceDestroyed(Surface surface) {
-        }
-
-        @Override
-        protected void onEncodedSample(MediaCodec.BufferInfo info, ByteBuffer data) {
-            // Here we could have just used ByteBuffer, but in real life case we might need to
-            // send sample over network, etc. This requires byte[]
-            byte[] buffer = new byte[info.size];
-
-            data.position(info.offset);
-            data.limit(info.offset + info.size);
-            data.get(buffer, 0, info.size);
-
-            if ((info.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {
-                // this is the first and only config sample, which contains information about codec
-                // like H.264, that let's configure the decoder
-
-                VideoEncodeConfig config = new VideoEncodeConfig(VIDEO_WIDTH, VIDEO_HEIGHT, info.size, 0, buffer);
-                mTalkback.addVideoEncodeConfigure(config);
-            } else {
-                // pass byte[] to decoder's queue to render asap
-
-                VideoEncodeFrame frame = new VideoEncodeFrame(info.size, 0, info.flags, info.presentationTimeUs, buffer);
-                mTalkback.addVideoEncodeFrame(frame);
-            }
-        }
-    }
 
     private String getIp() {
         WifiManager wm = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
