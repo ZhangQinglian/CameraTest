@@ -71,7 +71,6 @@ public abstract class ITalkback implements Runnable, Closeable,DataSender.Sender
 
     public void pause(){
         Log.d("scott"," ITalkback pause");
-        //mConfigs = new LinkedBlockingQueue<>();
     }
 
     @Override

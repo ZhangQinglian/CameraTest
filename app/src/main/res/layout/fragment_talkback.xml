@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".media.MediaActivity">
+
+    <me.hejmo.cameratest.media.AspectFrameLayout
+        android:id="@+id/continuousCapture_afl_receive"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <SurfaceView
+            android:id="@+id/receive_surface"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            />
+    </me.hejmo.cameratest.media.AspectFrameLayout>
+
+    <me.hejmo.cameratest.media.AspectFrameLayout
+        android:id="@+id/continuousCapture_afl_display"
+        android:layout_width="120dp"
+        android:layout_height="180dp">
+
+        <SurfaceView
+            android:id="@+id/display_surface"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"/>
+    </me.hejmo.cameratest.media.AspectFrameLayout>
+
+</FrameLayout>
