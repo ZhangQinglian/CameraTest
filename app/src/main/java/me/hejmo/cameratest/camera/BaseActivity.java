@@ -6,11 +6,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import me.hejmo.cameratest.artphelper.ARTPHelper;
-import me.hejmo.cameratest.media.Contract;
 import me.hejmo.cameratest.media.MediaActivity;
 
 

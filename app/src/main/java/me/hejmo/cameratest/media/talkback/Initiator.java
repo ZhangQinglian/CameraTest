@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import me.hejmo.cameratest.media.Contract;
-
 /**
  * @author qinglian.zhang
  */

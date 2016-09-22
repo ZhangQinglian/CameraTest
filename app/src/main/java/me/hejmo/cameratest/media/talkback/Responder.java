@@ -6,8 +6,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.net.Socket;
 
-import me.hejmo.cameratest.media.Contract;
-
 /**
  * @author qinglian.zhang
  */

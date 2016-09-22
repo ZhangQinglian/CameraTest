@@ -33,8 +33,6 @@ import me.hejmo.cameratest.R;
 import me.hejmo.cameratest.camera.CameraHolder;
 import me.hejmo.cameratest.camera.CameraUtils;
 import me.hejmo.cameratest.media.AspectFrameLayout;
-import me.hejmo.cameratest.media.Contract;
-import me.hejmo.cameratest.media.MediaActivity;
 import me.hejmo.cameratest.media.gles.EglCore;
 import me.hejmo.cameratest.media.gles.FullFrameRect;
 import me.hejmo.cameratest.media.gles.Texture2dProgram;
@@ -47,9 +45,7 @@ import me.hejmo.cameratest.media.talkback.Responder;
 import me.hejmo.cameratest.media.talkback.VideoEncodeConfig;
 import me.hejmo.cameratest.media.talkback.VideoEncodeFrame;
 
-import static me.hejmo.cameratest.media.Contract.DESIRED_PREVIEW_FPS;
-import static me.hejmo.cameratest.media.Contract.VIDEO_HEIGHT;
-import static me.hejmo.cameratest.media.Contract.VIDEO_WIDTH;
+import static me.hejmo.cameratest.media.ui.TalkbackContract.*;
 import static me.hejmo.cameratest.media.MediaActivity.TAG;
 
 /**
@@ -144,9 +140,9 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
     public static TalkbackFragment newInstance(String role, String ip) {
         TalkbackFragment fragment = new TalkbackFragment();
         Bundle args = new Bundle();
-        args.putString(Contract.ROLE, role);
-        if(Contract.RESPONDER.equals(role)){
-            args.putString(Contract.IP, ip);
+        args.putString(ROLE, role);
+        if(RESPONDER.equals(role)){
+            args.putString(IP, ip);
         }
         fragment.setArguments(args);
         return fragment;
@@ -156,9 +152,9 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mRole = getArguments().getString(Contract.ROLE);
-            if(Contract.RESPONDER.equals(mRole)){
-                mIP = getArguments().getString(Contract.IP);
+            mRole = getArguments().getString(ROLE);
+            if(RESPONDER.equals(mRole)){
+                mIP = getArguments().getString(IP);
             }
         }
     }
@@ -317,11 +313,11 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
     };
 
     private void startTalkback() {
-        if (mRole.equals(Contract.INITIATOR)) {
+        if (mRole.equals(INITIATOR)) {
             mTalkback = new Initiator(talkbackCallback,mRole);
             Executors.newSingleThreadExecutor().execute(mTalkback);
         }
-        if (mRole.equals(Contract.RESPONDER)) {
+        if (mRole.equals(RESPONDER)) {
             mTalkback = new Responder(talkbackCallback,mRole,mIP);
             Executors.newSingleThreadExecutor().execute(mTalkback);
         }

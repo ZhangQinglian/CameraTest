@@ -10,8 +10,6 @@ import android.view.Surface;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import me.hejmo.cameratest.media.Contract;
-
 /**
  * Created by vladlichonos on 6/5/15.
  */
