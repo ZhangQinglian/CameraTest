@@ -34,9 +34,6 @@ import me.hejmo.cameratest.media.gles.EglCore;
 import me.hejmo.cameratest.media.gles.FullFrameRect;
 import me.hejmo.cameratest.media.gles.Texture2dProgram;
 import me.hejmo.cameratest.media.gles.WindowSurface;
-import me.hejmo.cameratest.media.talkback.ITalkback;
-import me.hejmo.cameratest.media.talkback.VideoEncodeConfig;
-import me.hejmo.cameratest.media.talkback.VideoEncodeFrame;
 
 import static me.hejmo.cameratest.media.ui.TalkbackContract.*;
 import static me.hejmo.cameratest.media.MediaActivity.TAG;
@@ -231,9 +228,8 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
 
         mSecondsOfVideo = 0.0f;
 
-
-
         mReceiveSurfaceView = (SurfaceView) mView.findViewById(R.id.receive_surface);
+
         mReceiveSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
@@ -254,6 +250,7 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
                 //todo: decoder生命周期建议考虑跟随ReceiverSV
                 mPresenter.stopDecoder();
             }
+
         });
 
         //show ip
@@ -268,7 +265,8 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
 
     private void openCamera(int desiredWidth, int desiredHeight, int desiredFps) {
         if (mCamera != null) {
-            throw new RuntimeException("camera already initialized");
+            //throw new RuntimeException("camera already initialized");
+            return;
         }
 
         mCamera = CameraHolder.getInstance(getContext()).openCamera();
@@ -329,13 +327,13 @@ public class TalkbackFragment extends Fragment implements TalkbackContract.View{
         int viewHeight = sv.getHeight();
         GLES20.glViewport(0, 0, viewWidth, viewHeight);
         mFullFrameBlit.drawFrame(mTextureId, mTmpMatrix);
-        drawExtra(mFrameNum, viewWidth, viewHeight);
+        //drawExtra(mFrameNum, viewWidth, viewHeight);
         mDisplayWindowSurface.swapBuffers();
 
         mEncoderSurface.makeCurrent();
         GLES20.glViewport(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT);
         mFullFrameBlit.drawFrame(mTextureId, mTmpMatrix);
-        drawExtra(mFrameNum, VIDEO_WIDTH, VIDEO_HEIGHT);
+        //drawExtra(mFrameNum, VIDEO_WIDTH, VIDEO_HEIGHT);
         // mCircEncoder.frameAvailableSoon();
         mEncoderSurface.setPresentationTime(mCameraTexture.getTimestamp());
         mEncoderSurface.swapBuffers();

@@ -10,8 +10,6 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -38,8 +36,8 @@
             android:screenOrientation="portrait"
             android:taskAffinity="me.hejmo.cameratest.media.MediaActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
 
+        </activity>
         <activity android:name=".camera.BaseActivity">
 
         </activity>
@@ -50,12 +48,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service
-            android:name="com.zqlite.android.lolly.Lolly"
-            android:enabled="true"
-            android:exported="false"
-            android:process=":remote" />
 
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme">
+
+        </activity>
     </application>
 
 </manifest>

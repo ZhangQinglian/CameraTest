@@ -94,21 +94,26 @@ public class VideoDecoder implements VideoCodec {
         @SuppressWarnings("deprecation")
         public void decodeSample(byte[] data, int offset, int size, long presentationTimeUs, int flags) {
             if (mConfigured && mRunning) {
-                int index = mCodec.dequeueInputBuffer(mTimeoutUs);
-                if (index >= 0) {
-                    ByteBuffer buffer;
-                    // since API 21 we have new API to use
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                        buffer = mCodec.getInputBuffers()[index];
-                        buffer.clear();
-                    } else {
-                        buffer = mCodec.getInputBuffer(index);
+                try{
+                    int index = mCodec.dequeueInputBuffer(mTimeoutUs);
+                    if (index >= 0) {
+                        ByteBuffer buffer;
+                        // since API 21 we have new API to use
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                            buffer = mCodec.getInputBuffers()[index];
+                            buffer.clear();
+                        } else {
+                            buffer = mCodec.getInputBuffer(index);
+                        }
+                        if (buffer != null) {
+                            buffer.put(data, offset, size);
+                            mCodec.queueInputBuffer(index, 0, size, presentationTimeUs, flags);
+                        }
                     }
-                    if (buffer != null) {
-                        buffer.put(data, offset, size);
-                        mCodec.queueInputBuffer(index, 0, size, presentationTimeUs, flags);
-                    }
+                }catch (IllegalStateException e){
+
                 }
+
             }
         }
 

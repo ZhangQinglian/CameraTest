@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<me.hejmo.cameratest.media.ui.TalkbackView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/talkback_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".media.MediaActivity">
@@ -30,4 +31,4 @@
             android:layout_gravity="center"/>
     </me.hejmo.cameratest.media.AspectFrameLayout>
 
-</FrameLayout>
+</me.hejmo.cameratest.media.ui.TalkbackView>
