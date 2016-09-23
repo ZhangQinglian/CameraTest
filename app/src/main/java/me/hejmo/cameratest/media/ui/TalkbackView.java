@@ -20,9 +20,13 @@ public class TalkbackView extends FrameLayout {
 
     private View childFront;
 
-    private int height;
+    private int totalHeight;
 
-    private int width;
+    private int totalWidth;
+
+    private int frontMiniH;
+
+    private int frontMiniW;
 
 
     private FrameLayout.LayoutParams childFrontLP ;
@@ -33,13 +37,13 @@ public class TalkbackView extends FrameLayout {
             @Override
             public boolean onPreDraw() {
                 if(hasNavbar()){
-                height = getHeight() - getNavbarH() - 26;
+                totalHeight = getHeight() - getNavbarH() - 26;
                 }else {
-                    height = getHeight();
+                    totalHeight = getHeight();
                 }
-                width = getWidth();
-
-                Log.d("scott","width = " + width + "    heght = " + height);
+                totalWidth = getWidth();
+                frontMiniH = childFront.getHeight();
+                frontMiniW = childFront.getWidth();
                 getViewTreeObserver().removeOnPreDrawListener(this);
                 return false;
             }
@@ -63,6 +67,8 @@ public class TalkbackView extends FrameLayout {
 
         childFrontLP.setMargins(childFrontLP.leftMargin + animationPadding,childFrontLP.topMargin + animationPadding,childFrontLP.rightMargin,childFrontLP.bottomMargin);
         childFront.setLayoutParams(childFrontLP);
+
+
     }
 
     private final int animationPadding = 20;
@@ -70,11 +76,11 @@ public class TalkbackView extends FrameLayout {
     private void doAnimaiton() {
         int left = childFrontLP.leftMargin;
         int top = childFrontLP.topMargin;
-        int right = width - (left + childFront.getWidth());
-        int bottom = height - (top + childFront.getHeight());
+        int right = totalWidth - (left + childFront.getWidth());
+        int bottom = totalHeight - (top + childFront.getHeight());
         Log.d("scott","left = " + left + "  top = " + top + " right = " + right + "  bottom = " + bottom);
-        int strangePaddingLeft = width-animationPadding-childFront.getWidth();
-        int strangePaddingTop = height-animationPadding-childFront.getHeight();
+        int strangePaddingLeft = totalWidth -animationPadding-childFront.getWidth();
+        int strangePaddingTop = totalHeight -animationPadding-childFront.getHeight();
         if(left-animationPadding<0 && top-animationPadding<0){
             animat2(left,top,animationPadding,animationPadding);
             return ;
@@ -172,29 +178,71 @@ public class TalkbackView extends FrameLayout {
         float movingY;
         float deltaX;
         float deltaY;
+        float childW;
+        float childH;
+
+        float moveX1 ;
+        float moveX2 ;
+        float moveY1 ;
+        float moveY2 ;
+        float deltaDiagonal = -1;
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()){
                 case MotionEvent.ACTION_DOWN:
                     startX = event.getX();
                     startY = event.getY();
+                    childW = childFront.getWidth();
+                    childH = childFront.getHeight();
+
                     break;
 
                 case MotionEvent.ACTION_UP:
                     doAnimaiton();
+                    deltaDiagonal = -1;
                     break;
 
                 case MotionEvent.ACTION_MOVE:
-                    movingX = event.getX();
-                    movingY = event.getY();
-                    deltaX = movingX - startX;
-                    deltaY = movingY -startY;
-                    childFrontLP.setMargins(childFrontLP.leftMargin + (int)deltaX,childFrontLP.topMargin + (int)deltaY,childFrontLP.rightMargin,childFrontLP.bottomMargin);
-                    childFront.setLayoutParams(childFrontLP);
+                    int count = event.getPointerCount();
+                    Log.d("scott"," motion count = " + count);
+                    if(count == 1){
+                        movingX = event.getX();
+                        movingY = event.getY();
+                        deltaX = movingX - startX;
+                        deltaY = movingY -startY;
+                        childFrontLP.setMargins(childFrontLP.leftMargin + (int)deltaX,childFrontLP.topMargin + (int)deltaY,childFrontLP.rightMargin,childFrontLP.bottomMargin);
+                        childFront.setLayoutParams(childFrontLP);
+                    }
+                    if(count == 2){
+                        moveX1 = event.getX(0);
+                        moveX2 = event.getX(1);
+                        moveY1 = event.getY(0);
+                        moveY2 = event.getY(1);
+                        if(deltaDiagonal == -1){
+                            deltaDiagonal = (int) Math.sqrt(
+                                    Math.pow((moveX2-moveX1),2)
+                                            +Math.pow((moveY2-moveY1),2));
+                        }
+                        int delta = (int) ((int) Math.sqrt(
+                                                        Math.pow((moveX2-moveX1),2)
+                                                        +Math.pow((moveY2-moveY1),2)) - deltaDiagonal);
+                        Log.d("scott","delta = " + delta);
+                        float p = childW/childH;
+                        int tmpW = (int) (childW+delta/2);
+                        int tmpH = (int)(childH + delta/2/p);
+                        if(tmpW >= frontMiniW && tmpW <= totalWidth/3*2 &&
+                                tmpH >= frontMiniH && tmpH <= totalHeight/3*2   ){
+                            childFrontLP.width = tmpW;
+                            childFrontLP.height = tmpH;
+                            childFront.setLayoutParams(childFrontLP);
+                        }
+                    }
+
                     break;
             }
             return true;
         }
     };
+
 
 }
