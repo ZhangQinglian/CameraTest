@@ -12,13 +12,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import me.hejmo.cameratest.R;
-import me.hejmo.cameratest.artphelper.ARTPHelper;
 import me.hejmo.cameratest.camera.BaseActivity;
 
 import static me.hejmo.cameratest.media.ui.TalkbackContract.*;
 public class MediaLauncher extends AppCompatActivity {
 
-    final ARTPHelper artpHelper = new ARTPHelper(true);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

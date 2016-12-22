@@ -3,12 +3,9 @@ package me.hejmo.cameratest.camera;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
-import me.hejmo.cameratest.artphelper.ARTPHelper;
 import me.hejmo.cameratest.media.MediaActivity;
 import static me.hejmo.cameratest.media.ui.TalkbackContract.*;
 
@@ -24,7 +21,6 @@ public class BaseActivity extends AppCompatActivity {
 
     private boolean mShouldWaitSetContentView = true;
 
-    private ARTPHelper mARTPHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +30,7 @@ public class BaseActivity extends AppCompatActivity {
             finish();
         }
 
-        //权限检测
-        mARTPHelper = new ARTPHelper(false);
-        mARTPHelper.writeExternalStorage().useCamera().accessFineLocation();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !mARTPHelper.isAllPermissionGrant(this)) {
-            mARTPHelper.requestPermissions(this);
-            CameraHolder.getInstance(this).setmCameraPermission(false);
-        }else{
-            startMedia();
-        }
+        startMedia();
 
     }
 
@@ -67,22 +55,6 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        mARTPHelper.onRequestPermissionsResult(requestCode, permissions, grantResults, new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(BaseActivity.this, "权限不足", Toast.LENGTH_SHORT).show();
-            }
-        }, new Runnable() {
-            @Override
-            public void run() {
-                CameraHolder.getInstance(BaseActivity.this).setmCameraPermission(true);
-                Toast.makeText(BaseActivity.this, "权限获取成功", Toast.LENGTH_SHORT).show();
-                startMedia();
-            }
-        });
-    }
 
     private void startMedia(){
         Intent preIntent = getIntent();
