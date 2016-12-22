@@ -2,7 +2,7 @@
 
 此分支上的CameraTest在camera_mirror的基础上进行了改进，使用MediaCodec对需要发送的视频帧进行编解码。体验如下：
 
-![](http://7xprgn.com1.z0.glb.clouddn.com/IMG_8514.JPG)
+![](http://7xprgn.com1.z0.glb.clouddn.com/IMG_8514aa.JPG)
 
 使用MediaCodec框架的好处多多，视频流更加流畅且数据包大大缩小。
 
