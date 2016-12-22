@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CameraTest</string>
-    <string name="title_activity_launcher">Launcher</string>
+    <string name="camera_hint">输入对方ip最后一位</string>
+    <string name="camera_tip">1.请确保双方手机在同一个局域网下\n2.接收方首先点击Monitor按钮等待发送方连接\n3.发送放输入接收方最后一位ip后点击Camera按钮打开相机</string>
 </resources>

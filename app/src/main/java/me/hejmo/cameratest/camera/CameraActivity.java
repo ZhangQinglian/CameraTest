@@ -1,5 +1,6 @@
 package me.hejmo.cameratest.camera;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,7 +36,7 @@ import me.hejmo.cameratest.ThumbManager;
 /**
  * 同玩相机被控制方，真实拍照
  */
-public class CameraActivity extends BaseActivity implements CameraHolder.CameraCallback{
+public class CameraActivity extends Activity implements CameraHolder.CameraCallback{
 
     private CameraHolder mCameraHolder;
     private Handler mHandler;

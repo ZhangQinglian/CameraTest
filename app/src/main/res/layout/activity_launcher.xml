@@ -23,7 +23,7 @@
         android:layout_height="50dp"
         android:textColor="@android:color/white"
         android:gravity="center"
-        android:hint="输入对方ip最后一位"
+        android:hint="@string/camera_hint"
         android:textColorHint="@android:color/white"
         android:inputType="number"
         android:textSize="16sp"
@@ -41,6 +41,14 @@
         android:layout_below="@id/camera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:textColor="@android:color/white"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ip"
+        android:text="@string/camera_tip"
         android:textSize="16sp"
         android:gravity="center"
         android:textColor="@android:color/white"/>
