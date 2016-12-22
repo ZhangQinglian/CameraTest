@@ -2,7 +2,7 @@
 
 此分支上的CameraTest在master的基础上加了实时传输预览功能。体验如下：
 
-![](http://7xprgn.com1.z0.glb.clouddn.com/IMG_7859.JPG)
+![](http://7xprgn.com1.z0.glb.clouddn.com/IMG_7859aa.JPG)
 
 其中Camera的角色是发送方，它会通过镜头实时采集数据并发送给Monitor方。
 
