@@ -6,8 +6,10 @@
 
 使用MediaCodec框架的好处多多，视频流更加流畅且数据包大大缩小。
 
+![下载体验](http://7xprgn.com1.z0.glb.clouddn.com/2d17af043e6bc80b7a940f3679013851.png)
+
 ## How to use
 
  1. 确保双方手机在同一局域网
- 2. 双方都输入对方的ip，接着一方点击initiator，一方点击responder
+ 2. 双方都输入对方的ip，接着一方先点击发起，然后另一方点击响应
  3. 实时传输预览，效果类似QQ视频
