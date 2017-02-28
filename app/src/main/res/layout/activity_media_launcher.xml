@@ -27,7 +27,7 @@
         android:layout_below="@id/text_ip"
         android:layout_centerHorizontal="true"
         android:clickable="true"
-        android:text="Initiator"
+        android:text="发起"
         android:textSize="18dp"
         android:elevation="0dp" />
     <TextView
@@ -38,7 +38,7 @@
         android:textColor="@android:color/white"
         android:gravity="center"
         android:textSize="13sp"
-        android:text="确保两台手机连接同一个AP或路由器,输入发起者的IP"/>
+        android:text="确保两台手机连接同一个AP或路由器，输入对方ip后，首先由一方点击发起，接着另一方点击响应即可完成连接"/>
     <EditText
         android:id="@+id/edit_ip"
         android:layout_below="@id/text_tip"
@@ -53,7 +53,6 @@
         android:layout_below="@id/edit_ip"
         android:layout_centerHorizontal="true"
         android:clickable="true"
-        android:text="Responder"
+        android:text="响应"
         android:textSize="18dp" />
-
 </RelativeLayout>

@@ -63,6 +63,7 @@ public class DataReceiver {
             while(running){
 
                 try {
+                    if(inputStream == null) break;
                     type = inputStream.read();
                     if(type == -1){
                         running = false ;
